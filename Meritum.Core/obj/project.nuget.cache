@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Th8Um3fLHFA=",
+  "success": true,
+  "projectFilePath": "C:\\MeritumBackend\\Meritum.Core\\Meritum.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\naybe\\.nuget\\packages\\mongodb.bson\\2.25.0\\mongodb.bson.2.25.0.nupkg.sha512",
+    "C:\\Users\\naybe\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\naybe\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
