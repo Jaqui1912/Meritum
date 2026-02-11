@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Meritum.Core.Entities;
+using Meritum.Infrastructure.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,32 +13,44 @@ public class AuthController : ControllerBase
         _usersService = usersService;
     }
 
+    // 1. LOGIN (Auto-registro con Roles)
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        // 1. Validar Dominio (Tu regla de negocio)
         string rol = "Invitado";
-        if (request.Email.EndsWith("@alumno.ut.edu.mx")) rol = "Alumno";
+
+        // Reglas de Roles
+        if (request.Email.ToLower() == "director@ut.edu.mx") rol = "Administrador";
+        else if (request.Email.EndsWith("@alumno.ut.edu.mx")) rol = "Alumno";
         else if (request.Email.EndsWith("@ut.edu.mx")) rol = "Docente";
 
-        // 2. Buscar o Crear usuario en BD (Simplificado)
         var user = await _usersService.GetByEmailAsync(request.Email);
+        
         if (user == null)
         {
-            user = new User 
-            { 
-                // Recuerda que en Mongo el Id se genera solo o se deja nulo al crear
-                Email = request.Email, 
-                Role = rol 
-            };
-            
-            // CAMBIO 2: Usamos el método asíncrono del servicio
+            user = new User { Email = request.Email, Role = rol };
             await _usersService.CreateAsync(user);
         }
-
-        // 3. Retornar el objeto (En el futuro aquí devolverías un JWT Token)
         return Ok(user);
+    }
+
+    // 2. VER PERFIL (Por ID)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProfile(string id)
+    {
+        var user = await _usersService.GetByIdAsync(id);
+        if (user == null) return NotFound("Usuario no encontrado");
+        return Ok(user);
+    }
+
+    // 3. VER TODOS LOS USUARIOS (Para que no batalles buscando IDs)
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var users = await _usersService.GetAllAsync();
+        return Ok(users);
     }
 }
 
+// Clase auxiliar para recibir el JSON del login
 public class LoginRequest { public string Email { get; set; } }

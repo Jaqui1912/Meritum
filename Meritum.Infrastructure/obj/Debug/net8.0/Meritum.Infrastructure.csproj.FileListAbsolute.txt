@@ -1,0 +1,16 @@
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.csproj.AssemblyReference.cache
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.AssemblyInfoInputs.cache
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.AssemblyInfo.cs
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.csproj.CoreCompileInputs.cache
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.sourcelink.json
+C:\MeritumBackend\Meritum.Infrastructure\bin\Debug\net8.0\Meritum.Infrastructure.deps.json
+C:\MeritumBackend\Meritum.Infrastructure\bin\Debug\net8.0\Meritum.Infrastructure.dll
+C:\MeritumBackend\Meritum.Infrastructure\bin\Debug\net8.0\Meritum.Infrastructure.pdb
+C:\MeritumBackend\Meritum.Infrastructure\bin\Debug\net8.0\Meritum.Core.dll
+C:\MeritumBackend\Meritum.Infrastructure\bin\Debug\net8.0\Meritum.Core.pdb
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum..36127883.Up2Date
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.dll
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\refint\Meritum.Infrastructure.dll
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\Meritum.Infrastructure.pdb
+C:\MeritumBackend\Meritum.Infrastructure\obj\Debug\net8.0\ref\Meritum.Infrastructure.dll

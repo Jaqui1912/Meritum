@@ -1,9 +1,6 @@
 namespace Meritum.Infrastructure.Services;
 
-// Meritum.Infrastructure/Services/ProjectsService.cs
 using Meritum.Core.Entities;
-
-
 using Meritum.Core.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -19,15 +16,29 @@ public class ProjectsService
         _projectsCollection = mongoDatabase.GetCollection<Project>(settings.Value.ProjectsCollectionName);
     }
 
-    // Método para obtener todos (filtrado por categoría)
+    // 1. Obtener TODOS (Para el Admin general)
+    public async Task<List<Project>> GetAllAsync() =>
+        await _projectsCollection.Find(_ => true).ToListAsync();
+
+    // 2. Obtener por ID (Para ver detalle o editar)
+    public async Task<Project?> GetByIdAsync(string id) =>
+        await _projectsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    // 3. Obtener por categoria
     public async Task<List<Project>> GetByCategoryAsync(string categoryId) =>
         await _projectsCollection.Find(x => x.CategoryId == categoryId).ToListAsync();
 
-    // Método para obtener uno (detalle)
-    public async Task<Project?> GetAsync(string id) =>
-        await _projectsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+    // 4. Validar Duplicados
+    public async Task<Project?> GetByNameAsync(string title) =>
+        await _projectsCollection.Find(x => x.Title == title).FirstOrDefaultAsync();
 
-    // Método para crear (si necesitaras subir proyectos)
+    // CRUD 
     public async Task CreateAsync(Project newProject) =>
         await _projectsCollection.InsertOneAsync(newProject);
+
+    public async Task UpdateAsync(string id, Project updatedProject) =>
+        await _projectsCollection.ReplaceOneAsync(x => x.Id == id, updatedProject);
+
+    public async Task RemoveAsync(string id) =>
+        await _projectsCollection.DeleteOneAsync(x => x.Id == id);
 }

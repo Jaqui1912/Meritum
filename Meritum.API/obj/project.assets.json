@@ -1413,6 +1413,8 @@
     "net8.0": [
       "Meritum.Core >= 1.0.0",
       "Meritum.Infrastructure >= 1.0.0",
+      "Microsoft.Extensions.Options >= 8.0.2",
+      "MongoDB.Driver >= 2.25.0",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
   },
@@ -1465,6 +1467,14 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "Microsoft.Extensions.Options": {
+            "target": "Package",
+            "version": "[8.0.2, )"
+          },
+          "MongoDB.Driver": {
+            "target": "Package",
+            "version": "[2.25.0, )"
+          },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.6.2, )"

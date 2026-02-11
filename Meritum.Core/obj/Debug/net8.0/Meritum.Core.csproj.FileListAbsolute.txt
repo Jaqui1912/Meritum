@@ -1,0 +1,13 @@
+C:\MeritumBackend\Meritum.Core\bin\Debug\net8.0\Meritum.Core.deps.json
+C:\MeritumBackend\Meritum.Core\bin\Debug\net8.0\Meritum.Core.dll
+C:\MeritumBackend\Meritum.Core\bin\Debug\net8.0\Meritum.Core.pdb
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.csproj.AssemblyReference.cache
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.AssemblyInfoInputs.cache
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.AssemblyInfo.cs
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.csproj.CoreCompileInputs.cache
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.sourcelink.json
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.dll
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\refint\Meritum.Core.dll
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\Meritum.Core.pdb
+C:\MeritumBackend\Meritum.Core\obj\Debug\net8.0\ref\Meritum.Core.dll
