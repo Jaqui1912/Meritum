@@ -458,7 +458,10 @@
         },
         "runtime": {
           "bin/placeholder/Meritum.Infrastructure.dll": {}
-        }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       }
     }
   },

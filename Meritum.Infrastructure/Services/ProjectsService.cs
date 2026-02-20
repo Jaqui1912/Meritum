@@ -4,6 +4,8 @@ using Meritum.Core.Entities;
 using Meritum.Core.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using MongoDB.Bson;
+using System.Text.RegularExpressions;
 
 public class ProjectsService
 {
@@ -16,9 +18,32 @@ public class ProjectsService
         _projectsCollection = mongoDatabase.GetCollection<Project>(settings.Value.ProjectsCollectionName);
     }
 
-    // 1. Obtener TODOS (Para el Admin general)
-    public async Task<List<Project>> GetAllAsync() =>
-        await _projectsCollection.Find(_ => true).ToListAsync();
+    // Busqueda por texto
+
+
+    public async Task<List<Project>> GetAllAsync(string? categoryId = null, string? searchTerm = null)
+    {
+        var builder = Builders<Project>.Filter;
+        var filter = builder.Empty; // Filtro vacío por defecto (trae todo)
+
+        // 1. Filtrar por Categoría
+        if (!string.IsNullOrEmpty(categoryId))
+        {
+            filter &= builder.Eq(x => x.CategoryId, categoryId);
+        }
+
+        // 2. Búsqueda por Texto (En el Título)
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            // Usamos Regex para que busque sin importar mayúsculas/minúsculas (ignorando Case)
+            var searchRegex = new BsonRegularExpression(new Regex(searchTerm, RegexOptions.IgnoreCase));
+            filter &= builder.Regex(x => x.Title, searchRegex);
+        }
+
+        // Ejecutamos la consulta optimizada
+        return await _projectsCollection.Find(filter).ToListAsync();
+    }
+
 
     // 2. Obtener por ID (Para ver detalle o editar)
     public async Task<Project?> GetByIdAsync(string id) =>

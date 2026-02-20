@@ -36,8 +36,8 @@ public class EvaluationsService
         await _evaluationsCollection.Find(x => x.ProjectId == projectId && x.UserId == userId).FirstOrDefaultAsync();
 
     //  Obtener todas las evaluaciones hechas por un usuario (Para el Historial)
-    public async Task<List<Evaluation>> GetByUserAsync(string userId) =>
-        await _evaluationsCollection.Find(x => x.UserId == userId).ToListAsync();
+   // public async Task<List<Evaluation>> GetByUserAsync(string userId) =>
+     //   await _evaluationsCollection.Find(x => x.UserId == userId).ToListAsync();
 
     //Contar evaluaciones de un usuario (Para la estadística del Perfil)
     public async Task<long> CountByUserAsync(string userId) =>

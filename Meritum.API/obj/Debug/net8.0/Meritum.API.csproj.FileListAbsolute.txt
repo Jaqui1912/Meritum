@@ -49,3 +49,4 @@ C:\MeritumBackend\Meritum.API\obj\Debug\net8.0\refint\Meritum.API.dll
 C:\MeritumBackend\Meritum.API\obj\Debug\net8.0\Meritum.API.pdb
 C:\MeritumBackend\Meritum.API\obj\Debug\net8.0\Meritum.API.genruntimeconfig.cache
 C:\MeritumBackend\Meritum.API\obj\Debug\net8.0\ref\Meritum.API.dll
+C:\MeritumBackend\Meritum.API\bin\Debug\net8.0\Meritum.API.staticwebassets.runtime.json

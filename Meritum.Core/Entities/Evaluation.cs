@@ -1,38 +1,28 @@
-namespace Meritum.Core.Entities;
-
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Collections.Generic; // Para List
-using System; // Para DateTime
 
+namespace Meritum.Core.Entities;
+
+[BsonIgnoreExtraElements]
 public class Evaluation
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-  
     public string? Id { get; set; }
 
-    // --- CALIFICACIONES (Tu UI) ---
-    public double TechnicalScore { get; set; }    // 0 a 10
-    public double UxScore { get; set; }           // 0 a 10
-    public double PresentationScore { get; set; } // 0 a 10
-    
-    public double FinalScore { get; set; }        // Promedio (Ej: 8.3)
+    public string ProjectId { get; set; } = null!;
+    public string UserId { get; set; } = null!; // El maestro/juez
 
-    // --- FEEDBACK ---
-    // Chips (Ej: ["Excellent Design", "Clear Logic"])
-    public List<string> QuickFeedbackTags { get; set; } = new List<string>();
+    // LOS 8 CRITERIOS DE LA RÚBRICA (Calificaciones del 0 al 10)
+    public double Funcionalidad { get; set; }
+    public double Rendimiento { get; set; }
+    public double Arquitectura { get; set; }
+    public double UXUI { get; set; }
+    public double MVP { get; set; }
+    public double AnálisisMercado { get; set; }
+    public double ObjetivosInteligentes { get; set; }
+    public double Innovación { get; set; }
 
-    // ¿Dónde escribe el juez "Me gustó mucho pero..."?
-    //
-    //public string? Comment { get; set; }
-
-    // --- RELACIONES ---
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string ProjectId { get; set; } = null!; // Obligatorio
-
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string UserId { get; set; } = null!;    // Obligatorio (El Juez)
-
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // Promedio final calculado por el Backend
+    public double FinalScore { get; set; } 
 }

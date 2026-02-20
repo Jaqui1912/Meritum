@@ -1,5 +1,5 @@
-using Meritum.Core.Settings;           
-using Meritum.Infrastructure.Services; 
+using Meritum.Core.Settings;
+using Meritum.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,7 @@ builder.Services.AddSingleton<CategoriesService>();
 builder.Services.AddSingleton<ProjectsService>();
 builder.Services.AddSingleton<EvaluationsService>();
 builder.Services.AddSingleton<UsersService>();
-
+builder.Services.AddScoped<Meritum.Infrastructure.Services.FileStorageService>();
 // ---------------------------------------------------------
 // 3. Configuración de CORS (¡Vital para que el Frontend se conecte!)
 // ---------------------------------------------------------
@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
         {
             policy.AllowAnyOrigin()  // Permite que la App Móvil/Web entre desde cualquier lado
                   .AllowAnyMethod()  // Permite GET, POST, PUT, DELETE
-                  .AllowAnyHeader();
+                  .AllowAnyHeader(); // Permite cualquier tipo de dato
         });
 });
 
@@ -38,9 +38,29 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ---------------------------------------------------------
-// 4. Pipeline de Peticiones HTTP
-// ---------------------------------------------------------
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        // 1. Decimos que hubo un error de servidor (500)
+        context.Response.StatusCode = 500;
+        // 2. Le decimos a la app móvil que le vamos a responder en formato JSON
+        context.Response.ContentType = "application/json";
+
+        // 3. El mensaje bonito y robusto que la app móvil sí puede entender
+        var errorResponse = new
+        {
+            error = true,
+            message = "¡Ups! Ocurrió un problema interno en el servidor de Meritum. Por favor, intenta de nuevo más tarde."
+        };
+
+        await context.Response.WriteAsJsonAsync(errorResponse);
+    });
+});
+
+
+// 4. Peticiones HTTP
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -49,7 +69,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ¡IMPORTANTE! Usa CORS antes de la autorización
+app.UseStaticFiles();// Para descarga de los videos/documentos
+
+
 app.UseCors("PermitirTodo");
 
 app.UseAuthorization();

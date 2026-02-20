@@ -1,0 +1,69 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\documents\\3390f331-3192-4025-a33d-c3aa664763f1_exposicion de cristina.docx",
+      "PackagePath": "staticwebassets\\uploads\\documents\\3390f331-3192-4025-a33d-c3aa664763f1_exposicion de cristina.docx"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\documents\\3cce8dc3-e97c-4dbb-84c1-853bab0df27b_Actividad 1. U2 (Binas).docx",
+      "PackagePath": "staticwebassets\\uploads\\documents\\3cce8dc3-e97c-4dbb-84c1-853bab0df27b_Actividad 1. U2 (Binas).docx"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\documents\\58ac2a04-6ec0-48af-b106-382b5120f055_Ind_Vst_AguilerNarvaezOrtega_5CDSM.docx",
+      "PackagePath": "staticwebassets\\uploads\\documents\\58ac2a04-6ec0-48af-b106-382b5120f055_Ind_Vst_AguilerNarvaezOrtega_5CDSM.docx"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\documents\\c692a4b1-b959-4b5e-89f9-555ed96dccf1_Ind_Vst_AguilerNarvaezOrtega_5CDSM.docx",
+      "PackagePath": "staticwebassets\\uploads\\documents\\c692a4b1-b959-4b5e-89f9-555ed96dccf1_Ind_Vst_AguilerNarvaezOrtega_5CDSM.docx"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\images\\203793f9-0508-4c21-b890-42f1518aa9d2_Imagen de WhatsApp 2025-07-01 a las 12.34.56_03ddc3c8.jpg",
+      "PackagePath": "staticwebassets\\uploads\\images\\203793f9-0508-4c21-b890-42f1518aa9d2_Imagen de WhatsApp 2025-07-01 a las 12.34.56_03ddc3c8.jpg"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\images\\5126cba3-5232-43f7-bb27-a1bc53e64231_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg",
+      "PackagePath": "staticwebassets\\uploads\\images\\5126cba3-5232-43f7-bb27-a1bc53e64231_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\images\\a1f51406-5b16-406e-b078-d60dfe49b8f6_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg",
+      "PackagePath": "staticwebassets\\uploads\\images\\a1f51406-5b16-406e-b078-d60dfe49b8f6_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\images\\f3ffdf9a-905b-4f7e-8ef8-a77b9328fc2b_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg",
+      "PackagePath": "staticwebassets\\uploads\\images\\f3ffdf9a-905b-4f7e-8ef8-a77b9328fc2b_depositphotos_112693104-stock-photo-woman-taking-selfie-out-in.jpg"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\videos\\4301bc53-53c0-4842-846d-6ae4ec63343a_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\4301bc53-53c0-4842-846d-6ae4ec63343a_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\videos\\5a5a0c5a-b54c-4b1e-ae82-960b1d57b9c1_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\5a5a0c5a-b54c-4b1e-ae82-960b1d57b9c1_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\videos\\b3b5a68f-4ba8-43a4-ba32-2d64c1c1346f_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\b3b5a68f-4ba8-43a4-ba32-2d64c1c1346f_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4"
+    },
+    {
+      "Id": "C:\\MeritumBackend\\Meritum.API\\wwwroot\\uploads\\videos\\d164bb9d-a844-4136-9488-1dcfadc49fd1_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4",
+      "PackagePath": "staticwebassets\\uploads\\videos\\d164bb9d-a844-4136-9488-1dcfadc49fd1_WhatsApp Video 2026-02-17 at 6.08.42 PM.mp4"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Meritum.API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Meritum.API.props",
+      "PackagePath": "build\\Meritum.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Meritum.API.props",
+      "PackagePath": "buildMultiTargeting\\Meritum.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Meritum.API.props",
+      "PackagePath": "buildTransitive\\Meritum.API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
