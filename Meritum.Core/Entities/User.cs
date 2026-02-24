@@ -11,5 +11,6 @@ public class User
     public string Id { get; set; }
 
     public string Email { get; set; }
+    public string? Password { get; set; } // Opcional porque los alumnos no tienen contraseña (Entran con oauth en flutter posiblemente)
     public string Role { get; set; } = "Invitado";
 }
