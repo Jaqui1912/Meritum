@@ -1422,35 +1422,42 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\naybe\\.nuget\\packages\\": {}
+    "C:\\Users\\angel\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\MeritumBackend\\Meritum.API\\Meritum.API.csproj",
+      "projectUniqueName": "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
       "projectName": "Meritum.API",
-      "projectPath": "C:\\MeritumBackend\\Meritum.API\\Meritum.API.csproj",
-      "packagesPath": "C:\\Users\\naybe\\.nuget\\packages\\",
-      "outputPath": "C:\\MeritumBackend\\Meritum.API\\obj\\",
+      "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
+      "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\angel\\Meritum\\Meritum.API\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\naybe\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\angel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\MeritumBackend\\Meritum.Core\\Meritum.Core.csproj": {
-              "projectPath": "C:\\MeritumBackend\\Meritum.Core\\Meritum.Core.csproj"
+            "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
+              "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj"
             },
-            "C:\\MeritumBackend\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj": {
-              "projectPath": "C:\\MeritumBackend\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj"
+            "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj"
             }
           }
         }
@@ -1464,7 +1471,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -1494,6 +1502,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.23, 8.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[8.0.23, 8.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.23, 8.0.23]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[8.0.23, 8.0.23]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -1502,7 +1528,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -36,6 +36,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient("KeepAliveClient");
+builder.Services.AddHostedService<Meritum.API.Services.KeepAliveService>();
+
 var app = builder.Build();
 
 app.UseExceptionHandler(errorApp =>
@@ -75,6 +78,9 @@ app.UseStaticFiles();// Para descarga de los videos/documentos
 app.UseCors("PermitirTodo");
 
 app.UseAuthorization();
+
+// Endpoint super sencillo para responder al Keep Alive
+app.MapGet("/ping", () => Results.Ok("pong"));
 
 app.MapControllers();
 
