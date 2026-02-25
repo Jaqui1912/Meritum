@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Meritum.Core.Entities;
 using Meritum.Infrastructure.Services;
-
+using Meritum.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class CategoriesController : ControllerBase
@@ -23,23 +23,52 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Category newCategory, [FromQuery] string adminId)
+    // Agregamos de vuelta el adminId en la URL
+    public async Task<IActionResult> Create([FromForm] CreateCategoryDto newCategoryDto, [FromQuery] string adminId)
     {
+        //VALIDACIÓN DE SEGURIDAD 
         var user = await _usersService.GetByIdAsync(adminId);
-        // Si el usuario no existe O no es Administrador...
+
+        // Si el usuario no existe O no es Administrador, lo rebotamos
         if (user == null || user.Role != "Administrador")
         {
             return StatusCode(403, new { message = "Acceso Denegado. Solo el Administrador puede crear categorías." });
         }
-        // validacion
-        var existing = await _categoriesService.GetByNameAsync(newCategory.Name);
-        if (existing != null)
+
+        string iconUrl = string.Empty;
+
+    // Lógica para guardar la imagen
+        if (newCategoryDto.IconFile != null)
         {
-            return Conflict(new { message = $"¡La categoría '{newCategory.Name}' ya existe. No puedes duplicarla.!" });
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "categories");
+
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + newCategoryDto.IconFile.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await newCategoryDto.IconFile.CopyToAsync(stream);
+            }
+
+            iconUrl = $"/uploads/categories/{uniqueFileName}";
         }
 
-        await _categoriesService.CreateAsync(newCategory);
-        return Ok(new { message = "Categoría creada con éxito", id = newCategory.Id });
+        // Armamos la Categoría
+        var categoryToSave = new Category
+        {
+            Name = newCategoryDto.Name,
+            IconUrl = iconUrl
+        };
+
+        //Guardamos en la base de datos
+        await _categoriesService.CreateAsync(categoryToSave);
+
+        return Ok(new { message = "¡Categoría creada con éxito!", category = categoryToSave });
     }
 
     // editar
@@ -57,7 +86,7 @@ public class CategoriesController : ControllerBase
         if (existing == null) return NotFound("La categoría no existe.");
 
         updatedCategory.Id = existing.Id; // Asegurar que el ID no cambie
-        
+
         await _categoriesService.UpdateAsync(id, updatedCategory);
         return Ok(new { message = "Categoría actualizada correctamente." });
     }
