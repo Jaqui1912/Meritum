@@ -27,9 +27,10 @@
 body {
     background-color: var(--bg-color);
     background-image:
-        radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.05) 0, transparent 50%),
-        radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.05) 0, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.05) 0, transparent 50%);
+        radial-gradient(at 0% 0%, hsla(30, 50%, 50%, 0.08) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(45, 80%, 60%, 0.08) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(20, 90%, 55%, 0.05) 0, transparent 50%);
+    background-attachment: fixed;
     color: var(--text-main);
     min-height: 100vh;
     overflow-x: hidden;
@@ -428,11 +429,12 @@ textarea:focus {
     padding: 1.25rem;
     text-align: left;
     border-bottom: 1px solid rgba(209, 213, 219, 0.4);
+    color: #1F2937;
 }
 
 .modern-table th {
-    font-weight: 600;
-    color: var(--text-muted);
+    font-weight: 700;
+    color: #111827;
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -636,12 +638,12 @@ textarea:focus {
     position: absolute;
     top: 0;
     right: 0;
-    background: var(--danger);
-    color: white;
-    border: none;
+    background: #F3F4F6;
+    color: #484848;
+    border: 1px solid #D1D5DB;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -652,7 +654,7 @@ textarea:focus {
 }
 
 .remove-file-btn:hover {
-    background: var(--danger-hover);
+    background: #E5E7EB;
     transform: translate(50%, -50%) scale(1.1);
 }
 

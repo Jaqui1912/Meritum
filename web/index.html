@@ -185,8 +185,16 @@
                                 <i class='bx bx-image-add' id="image-icon"></i>
                                 <div id="image-preview-container" style="position:relative; display:none;">
                                     <img id="image-preview" class="file-preview-img" />
-                                    <button type="button" class="remove-file-btn" id="remove-image-btn"><i
-                                            class='bx bx-x'></i></button>
+                                    <button type="button" class="remove-file-btn" id="remove-image-btn"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848"
+                                            viewBox="2 2 20 20">
+                                            <path
+                                                d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z">
+                                            </path>
+                                            <path
+                                                d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z">
+                                            </path>
+                                        </svg></button>
                                 </div>
                                 <input type="file" id="project-image" accept="image/*">
                             </div>
@@ -195,22 +203,44 @@
                             <label>Video Promocional</label>
                             <div class="upload-area" id="video-upload-area">
                                 <i class='bx bx-video-plus' id="video-icon"></i>
-                                <div id="video-preview-container" style="position:relative; display:none;">
-                                    <span id="video-preview-name" class="file-name-preview"></span>
-                                    <button type="button" class="remove-file-btn" id="remove-video-btn"><i
-                                            class='bx bx-x'></i></button>
+                                <div id="video-preview-container"
+                                    style="position:relative; display:none; width:100%; padding-top:10px;">
+                                    <video id="video-preview-player" controls
+                                        style="max-width:100%; max-height:160px; border-radius:8px; display:block; margin: 0 auto;"></video>
+                                    <button type="button" class="remove-file-btn" id="remove-video-btn"
+                                        style="top:10px; right:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                            height="20" fill="#484848" viewBox="2 2 20 20">
+                                            <path
+                                                d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z">
+                                            </path>
+                                            <path
+                                                d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z">
+                                            </path>
+                                        </svg></button>
                                 </div>
                                 <input type="file" id="project-video" accept="video/mp4,video/x-m4v,video/*">
                             </div>
                         </div>
-                        <div class="file-upload-box full-width">
+                        <div class="file-upload-box full-width" style="border: none; padding: 0;">
                             <label>Documentos (PDFs, Word)</label>
-                            <div class="upload-area">
-                                <i class='bx bx-file-blank'></i>
-                                <ul id="docs-preview-list" class="file-name-preview docs-list"></ul>
+
+                            <!-- Lista visual de documentos -->
+                            <ul id="docs-preview-list" class="docs-list" style="margin-bottom: 15px;"></ul>
+
+                            <!-- Botón para añadir más -->
+                            <div class="upload-area docs-add-area"
+                                style="padding: 1rem; border-style: dashed; border-radius: 12px;">
+                                <div style="position:relative; display:inline-block;">
+                                    <i class='bx bx-file-blank' style="font-size: 2.5rem; color: #9CA3AF;"></i>
+                                    <div
+                                        style="position:absolute; bottom:-5px; right:-5px; background:#10B981; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:14px; border:2px solid white;">
+                                        <i class='bx bx-plus'></i>
+                                    </div>
+                                </div>
                                 <input type="file" id="project-docs" multiple accept=".pdf,.doc,.docx,.xlsx">
                             </div>
-                            <small>Puedes seleccionar múltiples archivos a la vez.</small>
+                            <small style="display:block; margin-top:5px; color:#6B7280;">Puedes seleccionar múltiples
+                                archivos a la vez.</small>
                         </div>
                     </div>
 

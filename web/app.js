@@ -370,7 +370,11 @@ function editProject(id) {
     }
 
     if (p.videoUrl) {
-        document.getElementById('video-preview-name').textContent = "Video actual guardado";
+        const videoPlayer = document.getElementById('video-preview-player');
+        if (videoPlayer) {
+            videoPlayer.src = p.videoUrl;
+            videoPlayer.style.display = 'block';
+        }
         if (videoContainer) videoContainer.style.display = 'block';
         if (videoIcon) videoIcon.style.display = 'none';
 
@@ -380,7 +384,12 @@ function editProject(id) {
 
     if (p.documentUrls && p.documentUrls.length > 0) {
         const ul = document.getElementById('docs-preview-list');
-        ul.innerHTML = `<li><span style="display:block; padding:8px; background:rgba(79, 70, 229, 0.05); border-radius:6px;">${p.documentUrls.length} documento(s) guardado(s)</span></li>`;
+        ul.innerHTML = '';
+        p.documentUrls.forEach(docUrl => {
+            const parts = docUrl.split('/');
+            const name = parts[parts.length - 1].split('_').pop();
+            ul.innerHTML += `<li style="position:relative; padding:8px 30px 8px 8px; background:rgba(250, 116, 43, 0.05); margin-bottom:6px; border-radius:6px; font-size:0.85rem; color:var(--primary); font-weight:500;">📄 ${name}</li>`;
+        });
     }
 
     document.getElementById('project-modal-title').textContent = "Editar Proyecto";
@@ -491,7 +500,9 @@ document.getElementById('project-image').addEventListener('change', function (e)
     }
 });
 
-document.getElementById('remove-image-btn').addEventListener('click', function () {
+document.getElementById('remove-image-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     document.getElementById('project-image').value = ""; // clear file
     document.getElementById('image-preview-container').style.display = 'none';
     document.getElementById('image-icon').style.display = 'block';
@@ -500,23 +511,37 @@ document.getElementById('remove-image-btn').addEventListener('click', function (
 document.getElementById('project-video').addEventListener('change', function (e) {
     const file = e.target.files[0];
     const previewContainer = document.getElementById('video-preview-container');
-    const previewName = document.getElementById('video-preview-name');
+    const player = document.getElementById('video-preview-player');
     const icon = document.getElementById('video-icon');
     const btn = document.getElementById('remove-video-btn');
 
     if (file) {
-        previewName.textContent = "🎬 " + file.name;
+        const fileUrl = URL.createObjectURL(file);
+        if (player) {
+            player.src = fileUrl;
+            player.style.display = 'block';
+        }
         previewContainer.style.display = 'block';
         icon.style.display = 'none';
         if (btn) btn.style.display = 'flex';
     } else {
+        if (player) player.src = "";
         previewContainer.style.display = 'none';
         icon.style.display = 'block';
     }
 });
 
-document.getElementById('remove-video-btn').addEventListener('click', function () {
+document.getElementById('remove-video-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     document.getElementById('project-video').value = ""; // clear file
+
+    const player = document.getElementById('video-preview-player');
+    if (player) {
+        player.pause();
+        player.src = "";
+    }
+
     document.getElementById('video-preview-container').style.display = 'none';
     document.getElementById('video-icon').style.display = 'block';
 });
@@ -544,13 +569,17 @@ function renderDocsList() {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'remove-file-btn';
-            btn.innerHTML = "<i class='bx bx-x'></i>";
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848" viewBox="2 2 20 20"><path d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z"></path><path d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z"></path></svg>`;
             btn.style.transform = 'none';
             btn.style.top = '50%';
             btn.style.transform = 'translateY(-50%)';
             btn.style.right = '4px';
 
-            btn.onclick = function () { removeDocFile(i); };
+            btn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                removeDocFile(i);
+            };
 
             li.appendChild(btn);
             list.appendChild(li);
@@ -615,7 +644,12 @@ function closeModal(id) {
             if (vidContainer) vidContainer.style.display = 'none';
             document.getElementById('video-icon').style.display = 'block';
 
-            document.getElementById('video-preview-name').innerHTML = '';
+            const player = document.getElementById('video-preview-player');
+            if (player) {
+                player.pause();
+                player.src = "";
+            }
+
             document.getElementById('docs-preview-list').innerHTML = '';
 
             const btn1 = document.getElementById('remove-image-btn');
