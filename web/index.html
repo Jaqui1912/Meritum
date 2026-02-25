@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- NOTIFICACIONES TOAST -->
@@ -150,7 +152,7 @@
             <div class="modal-body">
                 <form id="project-form">
                     <input type="hidden" id="project-id" value="">
-                    
+
                     <div class="form-grid">
                         <div class="input-group">
                             <label for="project-title">Título del Proyecto *</label>
@@ -177,8 +179,9 @@
                     <div class="form-grid files-grid">
                         <div class="file-upload-box">
                             <label>Imagen de Portada</label>
-                            <div class="upload-area">
-                                <i class='bx bx-image-add'></i>
+                            <div class="upload-area" id="image-upload-area">
+                                <i class='bx bx-image-add' id="image-icon"></i>
+                                <img id="image-preview" class="file-preview-img" style="display: none;" />
                                 <input type="file" id="project-image" accept="image/*">
                             </div>
                         </div>
@@ -186,6 +189,7 @@
                             <label>Video Promocional</label>
                             <div class="upload-area">
                                 <i class='bx bx-video-plus'></i>
+                                <span id="video-preview-name" class="file-name-preview"></span>
                                 <input type="file" id="project-video" accept="video/mp4,video/x-m4v,video/*">
                             </div>
                         </div>
@@ -193,6 +197,7 @@
                             <label>Documentos (PDFs, Word)</label>
                             <div class="upload-area">
                                 <i class='bx bx-file-blank'></i>
+                                <ul id="docs-preview-list" class="file-name-preview docs-list"></ul>
                                 <input type="file" id="project-docs" multiple accept=".pdf,.doc,.docx,.xlsx">
                             </div>
                             <small>Puedes seleccionar múltiples archivos a la vez.</small>
@@ -200,7 +205,8 @@
                     </div>
 
                     <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('project-modal')">Cancelar</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeModal('project-modal')">Cancelar</button>
                         <button type="submit" class="btn btn-primary" id="save-project-btn">Guardar Proyecto</button>
                     </div>
                 </form>
@@ -222,8 +228,16 @@
                         <label for="category-name">Nombre de la Categoría *</label>
                         <input type="text" id="category-name" required placeholder="Ej. Ciencias Básicas">
                     </div>
+                    <div class="input-group">
+                        <label for="category-icon">Ícono (Clase de Boxicons) *</label>
+                        <input type="text" id="category-icon" required placeholder="Ej. bx-code-alt, bx-brain">
+                        <small style="color:var(--text-light); margin-top:5px; display:block;">Busca íconos en <a
+                                href="https://boxicons.com/" target="_blank"
+                                style="color:var(--primary)">boxicons.com</a></small>
+                    </div>
                     <div class="modal-actions">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('category-modal')">Cancelar</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeModal('category-modal')">Cancelar</button>
                         <button type="submit" class="btn btn-primary" id="save-category-btn">Guardar</button>
                     </div>
                 </form>
@@ -235,4 +249,5 @@
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>

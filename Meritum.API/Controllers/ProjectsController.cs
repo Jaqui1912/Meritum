@@ -131,8 +131,8 @@ public class ProjectsController : ControllerBase
         {
             CategoryId = dto.CategoryId,
             Title = dto.Title,
-            Description = dto.Description,
-            TeamMembers = dto.TeamMembers,
+            Description = dto.Description ?? "",
+            TeamMembers = dto.TeamMembers ?? "",
 
             // Asignamos las rutas
             ImageUrl = imageUrl,       // <--- Nueva Imagen

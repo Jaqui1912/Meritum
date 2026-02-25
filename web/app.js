@@ -1,6 +1,19 @@
 // URL Base configurada en config.js
 const API_URL = CONFIG.API_BASE_URL + '/api';
 
+// Utilidad Debounce para evitar spam de peticiones
+const _ = {
+    debounce(func, delay) {
+        let timeoutId;
+        return function (...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+};
+
 // Elementos del DOM
 const loginScreen = document.getElementById('login-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
@@ -21,7 +34,6 @@ let appState = {
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     setupNavigation();
-    setupModals();
 });
 
 function checkAuth() {
@@ -68,9 +80,9 @@ loginForm.addEventListener('submit', async (e) => {
 
         if (response.ok) {
             // Guardar sesión
-            appState.adminId = data.id;
-            appState.adminName = data.email.split('@')[0];
-            localStorage.setItem('meritumAdminId', data.id);
+            appState.adminId = data.id || data.Id; // Fix para asegurar que saca la ID enviada
+            appState.adminName = data.email ? data.email.split('@')[0] : 'Admin';
+            localStorage.setItem('meritumAdminId', appState.adminId);
             localStorage.setItem('meritumAdminName', appState.adminName);
 
             showToast('¡Bienvenido de nuevo, Administrador!', 'success');
@@ -141,10 +153,16 @@ function renderCategoriesTable() {
 
     appState.categories.forEach(cat => {
         const tr = document.createElement('tr');
+        // Renderizamos el ícono si existe, o un cubo por defecto
+        const iconHtml = cat.iconUrl ? `<i class='bx ${cat.iconUrl}' style='font-size:1.2rem; color:var(--primary); margin-right:8px; vertical-align:middle;'></i>` : '';
+
         tr.innerHTML = `
-            <td><strong>${cat.name}</strong></td>
+            <td>${iconHtml}<strong>${cat.name}</strong></td>
             <td><span class="badge badge-info">${cat.id}</span></td>
             <td style="text-align: center;">
+                <button class="btn-icon edit" onclick="editCategory('${cat.id}')" title="Editar">
+                    <i class='bx bx-edit-alt'></i>
+                </button>
                 <button class="btn-icon delete" onclick="deleteCategory('${cat.id}')" title="Eliminar">
                     <i class='bx bx-trash'></i>
                 </button>
@@ -152,6 +170,18 @@ function renderCategoriesTable() {
         `;
         tbody.appendChild(tr);
     });
+}
+
+function editCategory(id) {
+    const cat = appState.categories.find(c => c.id === id);
+    if (!cat) return;
+
+    document.getElementById('category-id').value = cat.id;
+    document.getElementById('category-name').value = cat.name;
+    document.getElementById('category-icon').value = cat.iconUrl || '';
+
+    document.getElementById('category-modal-title').textContent = "Editar Categoría";
+    openModal('category-modal');
 }
 
 function updateCategorySelects() {
@@ -174,27 +204,36 @@ document.getElementById('search-project').addEventListener('input', _.debounce(l
 
 document.getElementById('category-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const id = document.getElementById('category-id').value;
     const name = document.getElementById('category-name').value;
+    const icon = document.getElementById('category-icon').value;
     const btn = document.getElementById('save-category-btn');
 
     try {
         btn.disabled = true;
         btn.innerHTML = "Guardando...";
 
-        const res = await fetch(`${API_URL}/Categories?adminId=${appState.adminId}`, {
-            method: 'POST',
+        const isEditing = id !== "";
+        const url = isEditing
+            ? `${API_URL}/Categories/${id}?adminId=${appState.adminId}`
+            : `${API_URL}/Categories?adminId=${appState.adminId}`;
+
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method: method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description: '' })
+            body: JSON.stringify({ name: name, iconUrl: icon })
         });
 
         const data = await res.json();
         if (res.ok) {
-            showToast('Categoría creada exitosamente', 'success');
+            showToast(`Categoría ${isEditing ? 'actualizada' : 'creada'} exitosamente`, 'success');
             closeModal('category-modal');
             document.getElementById('category-form').reset();
             loadCategories();
         } else {
-            showToast(data.message || 'Error al crear.', 'error');
+            showToast(data.message || 'Error al guardar.', 'error');
         }
     } catch (err) {
         showToast('Error de conexión', 'error');
@@ -279,57 +318,164 @@ function renderProjectsTable() {
     });
 }
 
+function editProject(id) {
+    const p = appState.projects.find(x => x.id === id);
+    if (!p) return;
+
+    document.getElementById('project-id').value = p.id;
+    document.getElementById('project-title').value = p.title;
+    document.getElementById('project-category').value = p.categoryId;
+    document.getElementById('project-members').value = p.teamMembers || '';
+    document.getElementById('project-desc').value = p.description || '';
+
+    // Reset previews
+    document.getElementById('image-preview').style.display = 'none';
+    document.getElementById('image-icon').style.display = 'block';
+    document.getElementById('video-preview-name').textContent = '';
+    document.getElementById('docs-preview-list').innerHTML = '';
+
+    // Show existing image preview if available
+    if (p.imageUrl) {
+        document.getElementById('image-preview').src = p.imageUrl;
+        document.getElementById('image-preview').style.display = 'block';
+        document.getElementById('image-icon').style.display = 'none';
+    }
+
+    if (p.videoUrl) {
+        document.getElementById('video-preview-name').textContent = "Video actual guardado";
+    }
+
+    if (p.documentUrls && p.documentUrls.length > 0) {
+        const ul = document.getElementById('docs-preview-list');
+        ul.innerHTML = `<li>${p.documentUrls.length} documento(s) guardado(s)</li>`;
+    }
+
+    document.getElementById('project-modal-title').textContent = "Editar Proyecto";
+    openModal('project-modal');
+}
+
 document.getElementById('project-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('save-project-btn');
-
-    const title = document.getElementById('project-title').value;
-    const categoryId = document.getElementById('project-category').value;
-    const teamMembers = document.getElementById('project-members').value;
-    const description = document.getElementById('project-desc').value;
-
-    // Archivos
-    const imageInput = document.getElementById('project-image');
-    const videoInput = document.getElementById('project-video');
-    const docsInput = document.getElementById('project-docs');
-
-    const formData = new FormData();
-    formData.append('Title', title);
-    formData.append('CategoryId', categoryId);
-    formData.append('TeamMembers', teamMembers);
-    formData.append('Description', description);
-
-    if (imageInput.files.length > 0) formData.append('ImageFile', imageInput.files[0]);
-    if (videoInput.files.length > 0) formData.append('VideoFile', videoInput.files[0]);
-
-    for (let i = 0; i < docsInput.files.length; i++) {
-        formData.append('DocumentFiles', docsInput.files[i]);
-    }
+    const id = document.getElementById('project-id').value;
 
     try {
+        const title = document.getElementById('project-title').value || '';
+        const categoryId = document.getElementById('project-category').value || '';
+        const teamMembers = document.getElementById('project-members').value || '';
+        const description = document.getElementById('project-desc').value || '';
+
+        // Archivos
+        const imageInput = document.getElementById('project-image');
+        const videoInput = document.getElementById('project-video');
+        const docsInput = document.getElementById('project-docs');
+
+        const formData = new FormData();
+        formData.append('Title', title);
+        formData.append('CategoryId', categoryId);
+
+        // Solo enviar si no están vacíos (para que .NET los tome como null si están ausentes)
+        if (teamMembers.trim() !== '') formData.append('TeamMembers', teamMembers);
+        if (description.trim() !== '') formData.append('Description', description);
+
+        // Si es edición, C# espera que la clase completa se empareje para evitar nulos sobreescribiendo
+        if (id) formData.append('Id', id);
+
+        if (imageInput && imageInput.files && imageInput.files.length > 0) {
+            formData.append('ImageFile', imageInput.files[0]);
+        }
+        if (videoInput && videoInput.files && videoInput.files.length > 0) {
+            formData.append('VideoFile', videoInput.files[0]);
+        }
+        if (docsInput && docsInput.files) {
+            for (let i = 0; i < docsInput.files.length; i++) {
+                formData.append('DocumentFiles', docsInput.files[i]);
+            }
+        }
+
         btn.disabled = true;
         btn.innerHTML = "Subiendo archivos...";
 
-        // Usamos la URL de creacion con adminId
-        const res = await fetch(`${API_URL}/Projects?adminId=${appState.adminId}`, {
-            method: 'POST',
-            body: formData // No se pone Content-Type, el navegador lo calcula para multipart/form-data
+        const isEditing = id !== "";
+        const url = isEditing
+            ? `${API_URL}/Projects/${id}?adminId=${appState.adminId}`
+            : `${API_URL}/Projects?adminId=${appState.adminId}`;
+
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const res = await fetch(url, {
+            method: method,
+            body: formData
         });
 
         if (res.ok) {
-            showToast('Proyecto guardado y archivos subidos con éxito', 'success');
+            showToast(`Proyecto ${isEditing ? 'actualizado' : 'guardado'} con éxito`, 'success');
             closeModal('project-modal');
             document.getElementById('project-form').reset();
+
+            // Limpiar previews manuales en cascarilla
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('image-icon').style.display = 'block';
+            document.getElementById('video-preview-name').textContent = '';
+            document.getElementById('docs-preview-list').innerHTML = '';
+
             loadProjects();
         } else {
             const data = await res.json();
             showToast(data.message || 'Error al guardar.', 'error');
         }
     } catch (err) {
+        console.error("Submit Error:", err);
         showToast('Error de conexión o archivo demasiado grande.', 'error');
     } finally {
         btn.disabled = false;
         btn.innerHTML = "Guardar Proyecto";
+    }
+});
+
+// ==========================================
+// PREVISUALIZACIÓN DE ARCHIVOS
+// ==========================================
+document.getElementById('project-image').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('image-preview');
+    const icon = document.getElementById('image-icon');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            icon.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+        icon.style.display = 'block';
+    }
+});
+
+document.getElementById('project-video').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('video-preview-name');
+    if (file) {
+        preview.textContent = "🎬 " + file.name;
+    } else {
+        preview.textContent = "";
+    }
+});
+
+document.getElementById('project-docs').addEventListener('change', function (e) {
+    const files = e.target.files;
+    const list = document.getElementById('docs-preview-list');
+    list.innerHTML = '';
+
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const li = document.createElement('li');
+            li.textContent = "📄 " + files[i].name;
+            list.appendChild(li);
+        }
     }
 });
 
@@ -384,15 +530,3 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// Debounce util para evitar spam de peticiones al teclear rapido
-const _ = {
-    debounce(func, delay) {
-        let timeoutId;
-        return function (...args) {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                func.apply(this, args);
-            }, delay);
-        };
-    }
-};

@@ -6,8 +6,8 @@ public class CreateProjectDto
 {
     public string CategoryId { get; set; } = null!;
     public string Title { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public string TeamMembers { get; set; } = null!;
+    public string? Description { get; set; }
+    public string? TeamMembers { get; set; }
 
     // 📸 1. NUEVO: El archivo de la imagen de portada
     public IFormFile? ImageFile { get; set; }
