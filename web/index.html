@@ -102,6 +102,8 @@
                                     <th>Portada</th>
                                     <th>Título</th>
                                     <th>Categoría</th>
+                                    <th>Video</th>
+                                    <th>Documentos</th>
                                     <th>Integrantes</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -181,15 +183,23 @@
                             <label>Imagen de Portada</label>
                             <div class="upload-area" id="image-upload-area">
                                 <i class='bx bx-image-add' id="image-icon"></i>
-                                <img id="image-preview" class="file-preview-img" style="display: none;" />
+                                <div id="image-preview-container" style="position:relative; display:none;">
+                                    <img id="image-preview" class="file-preview-img" />
+                                    <button type="button" class="remove-file-btn" id="remove-image-btn"><i
+                                            class='bx bx-x'></i></button>
+                                </div>
                                 <input type="file" id="project-image" accept="image/*">
                             </div>
                         </div>
                         <div class="file-upload-box">
                             <label>Video Promocional</label>
-                            <div class="upload-area">
-                                <i class='bx bx-video-plus'></i>
-                                <span id="video-preview-name" class="file-name-preview"></span>
+                            <div class="upload-area" id="video-upload-area">
+                                <i class='bx bx-video-plus' id="video-icon"></i>
+                                <div id="video-preview-container" style="position:relative; display:none;">
+                                    <span id="video-preview-name" class="file-name-preview"></span>
+                                    <button type="button" class="remove-file-btn" id="remove-video-btn"><i
+                                            class='bx bx-x'></i></button>
+                                </div>
                                 <input type="file" id="project-video" accept="video/mp4,video/x-m4v,video/*">
                             </div>
                         </div>

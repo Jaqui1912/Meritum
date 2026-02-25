@@ -26,4 +26,10 @@ RUN dotnet publish "./Meritum.API.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Cambiar a root temporalmente para crear la carpeta de descargas y darle permisos al usuario de aspnet
+USER root
+RUN mkdir -p /app/wwwroot/uploads && chown -R app:app /app/wwwroot
+USER app
+
 ENTRYPOINT ["dotnet", "Meritum.API.dll"]

@@ -49,12 +49,14 @@ function showLogin() {
     dashboardScreen.classList.remove('active');
 }
 
-function showDashboard() {
+async function showDashboard() {
     loginScreen.classList.remove('active');
     dashboardScreen.classList.add('active');
     document.getElementById('user-role-label').textContent = "Admin: " + appState.adminName;
-    loadCategories(); // Cargar datos iniciales
-    loadProjects();
+
+    // Cargar categorías primero para que cuando carguen los proyectos, puedan mapear los nombres correctamente
+    await loadCategories();
+    await loadProjects();
 }
 
 // ==========================================
@@ -286,7 +288,7 @@ function renderProjectsTable() {
     tbody.innerHTML = '';
 
     if (appState.projects.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #6B7280; padding: 2rem;">No hay proyectos registrados aún.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #6B7280; padding: 2rem;">No hay proyectos registrados aún.</td></tr>`;
         return;
     }
 
@@ -300,15 +302,32 @@ function renderProjectsTable() {
             ? `<img src="${p.imageUrl}" class="project-thumbnail" alt="Thumb">`
             : `<div class="empty-thumbnail"><i class='bx bx-image'></i></div>`;
 
+        // Extraer nombre de video
+        let videoStr = '<span style="color:#9CA3AF; font-size:0.8rem;">N/A</span>';
+        if (p.videoUrl) {
+            const parts = p.videoUrl.split('/');
+            const name = parts[parts.length - 1].split('_').pop(); // Quita el GUID si lo tiene (opcional, pero ayuda a leer)
+            videoStr = `<span style="font-size:0.85rem;" title="${name}">🎬 Si</span>`;
+        }
+
+        // Documentos count
+        let docsStr = '<span style="color:#9CA3AF; font-size:0.8rem;">N/A</span>';
+        if (p.documentUrls && p.documentUrls.length > 0) {
+            docsStr = `<span class="badge" style="background:var(--secondary); color:#A16207;">📄 ${p.documentUrls.length}</span>`;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${imgBlock}</td>
             <td><strong>${p.title}</strong></td>
             <td><span class="badge">${categoryName}</span></td>
+            <td>${videoStr}</td>
+            <td>${docsStr}</td>
             <td style="font-size: 0.875rem;">${p.teamMembers || 'N/A'}</td>
             <td>
-                <!-- Por ahora Edit lo dejamos comentado si no hemos implementado el modo UPDATE de archivos, pero puedes agregarlo facilmente -->
-                <!-- <button class="btn-icon edit" title="Editar"><i class='bx bx-edit-alt'></i></button> -->
+                <button class="btn-icon edit" onclick="editProject('${p.id}')" title="Editar">
+                    <i class='bx bx-edit-alt'></i>
+                </button>
                 <button class="btn-icon delete" onclick="deleteProject('${p.id}')" title="Eliminar">
                     <i class='bx bx-trash'></i>
                 </button>
@@ -329,25 +348,39 @@ function editProject(id) {
     document.getElementById('project-desc').value = p.description || '';
 
     // Reset previews
-    document.getElementById('image-preview').style.display = 'none';
+    document.getElementById('image-preview-container').style.display = 'none';
     document.getElementById('image-icon').style.display = 'block';
-    document.getElementById('video-preview-name').textContent = '';
+
+    const videoContainer = document.getElementById('video-preview-container');
+    if (videoContainer) videoContainer.style.display = 'none';
+    const videoIcon = document.getElementById('video-icon');
+    if (videoIcon) videoIcon.style.display = 'block';
+
     document.getElementById('docs-preview-list').innerHTML = '';
 
     // Show existing image preview if available
     if (p.imageUrl) {
         document.getElementById('image-preview').src = p.imageUrl;
-        document.getElementById('image-preview').style.display = 'block';
+        document.getElementById('image-preview-container').style.display = 'block';
         document.getElementById('image-icon').style.display = 'none';
+
+        // Hide remove button for existing images since we don't have DELETE endpoint logic for single files yet
+        const btn = document.getElementById('remove-image-btn');
+        if (btn) btn.style.display = 'none';
     }
 
     if (p.videoUrl) {
         document.getElementById('video-preview-name').textContent = "Video actual guardado";
+        if (videoContainer) videoContainer.style.display = 'block';
+        if (videoIcon) videoIcon.style.display = 'none';
+
+        const btn = document.getElementById('remove-video-btn');
+        if (btn) btn.style.display = 'none';
     }
 
     if (p.documentUrls && p.documentUrls.length > 0) {
         const ul = document.getElementById('docs-preview-list');
-        ul.innerHTML = `<li>${p.documentUrls.length} documento(s) guardado(s)</li>`;
+        ul.innerHTML = `<li><span style="display:block; padding:8px; background:rgba(79, 70, 229, 0.05); border-radius:6px;">${p.documentUrls.length} documento(s) guardado(s)</span></li>`;
     }
 
     document.getElementById('project-modal-title').textContent = "Editar Proyecto";
@@ -438,46 +471,106 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
 // ==========================================
 document.getElementById('project-image').addEventListener('change', function (e) {
     const file = e.target.files[0];
+    const previewContainer = document.getElementById('image-preview-container');
     const preview = document.getElementById('image-preview');
     const icon = document.getElementById('image-icon');
+    const btn = document.getElementById('remove-image-btn');
 
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
             preview.src = e.target.result;
-            preview.style.display = 'block';
+            previewContainer.style.display = 'block';
             icon.style.display = 'none';
+            if (btn) btn.style.display = 'flex';
         }
         reader.readAsDataURL(file);
     } else {
-        preview.style.display = 'none';
+        previewContainer.style.display = 'none';
         icon.style.display = 'block';
     }
 });
 
+document.getElementById('remove-image-btn').addEventListener('click', function () {
+    document.getElementById('project-image').value = ""; // clear file
+    document.getElementById('image-preview-container').style.display = 'none';
+    document.getElementById('image-icon').style.display = 'block';
+});
+
 document.getElementById('project-video').addEventListener('change', function (e) {
     const file = e.target.files[0];
-    const preview = document.getElementById('video-preview-name');
+    const previewContainer = document.getElementById('video-preview-container');
+    const previewName = document.getElementById('video-preview-name');
+    const icon = document.getElementById('video-icon');
+    const btn = document.getElementById('remove-video-btn');
+
     if (file) {
-        preview.textContent = "🎬 " + file.name;
+        previewName.textContent = "🎬 " + file.name;
+        previewContainer.style.display = 'block';
+        icon.style.display = 'none';
+        if (btn) btn.style.display = 'flex';
     } else {
-        preview.textContent = "";
+        previewContainer.style.display = 'none';
+        icon.style.display = 'block';
     }
 });
 
+document.getElementById('remove-video-btn').addEventListener('click', function () {
+    document.getElementById('project-video').value = ""; // clear file
+    document.getElementById('video-preview-container').style.display = 'none';
+    document.getElementById('video-icon').style.display = 'block';
+});
+
 document.getElementById('project-docs').addEventListener('change', function (e) {
-    const files = e.target.files;
+    renderDocsList();
+});
+
+function renderDocsList() {
+    const input = document.getElementById('project-docs');
+    const files = input.files;
     const list = document.getElementById('docs-preview-list');
     list.innerHTML = '';
 
     if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
             const li = document.createElement('li');
+            li.style.position = 'relative';
+            li.style.padding = '8px 30px 8px 8px';
+            li.style.background = 'rgba(250, 116, 43, 0.05)';
+            li.style.marginBottom = '6px';
+            li.style.borderRadius = '6px';
             li.textContent = "📄 " + files[i].name;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'remove-file-btn';
+            btn.innerHTML = "<i class='bx bx-x'></i>";
+            btn.style.transform = 'none';
+            btn.style.top = '50%';
+            btn.style.transform = 'translateY(-50%)';
+            btn.style.right = '4px';
+
+            btn.onclick = function () { removeDocFile(i); };
+
+            li.appendChild(btn);
             list.appendChild(li);
         }
     }
-});
+}
+
+function removeDocFile(index) {
+    const input = document.getElementById('project-docs');
+    const dt = new DataTransfer();
+
+    for (let i = 0; i < input.files.length; i++) {
+        if (i !== index) {
+            dt.items.add(input.files[i]);
+        }
+    }
+
+    input.files = dt.files;
+    renderDocsList(); // re-render list without the removed item
+}
 
 async function deleteProject(id) {
     if (!confirm('¿Estás seguro de que deseas eliminar este proyecto completamente?')) return;
@@ -511,6 +604,25 @@ function closeModal(id) {
         // si es un form, lo limpiamos al cerrar
         const form = modal.querySelector('form');
         if (form) form.reset();
+
+        // Limpieza visual extra si es proyecto
+        if (id === 'project-modal') {
+            const imgContainer = document.getElementById('image-preview-container');
+            if (imgContainer) imgContainer.style.display = 'none';
+            document.getElementById('image-icon').style.display = 'block';
+
+            const vidContainer = document.getElementById('video-preview-container');
+            if (vidContainer) vidContainer.style.display = 'none';
+            document.getElementById('video-icon').style.display = 'block';
+
+            document.getElementById('video-preview-name').innerHTML = '';
+            document.getElementById('docs-preview-list').innerHTML = '';
+
+            const btn1 = document.getElementById('remove-image-btn');
+            if (btn1) btn1.style.display = 'flex'; // reset default
+            const btn2 = document.getElementById('remove-video-btn');
+            if (btn2) btn2.style.display = 'flex'; // reset default
+        }
     }
 }
 
