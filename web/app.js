@@ -28,6 +28,10 @@ let appState = {
     projects: []
 };
 
+let removeExistingImage = false;
+let removeExistingVideo = false;
+let keptDocumentUrls = [];
+
 // ==========================================
 // 1. INICIALIZACIÓN
 // ==========================================
@@ -358,15 +362,20 @@ function editProject(id) {
 
     document.getElementById('docs-preview-list').innerHTML = '';
 
+    removeExistingImage = false;
+    removeExistingVideo = false;
+    keptDocumentUrls = p.documentUrls ? [...p.documentUrls] : [];
+    currentDocsTransfer = new DataTransfer();
+    document.getElementById('project-docs').value = "";
+
     // Show existing image preview if available
     if (p.imageUrl) {
         document.getElementById('image-preview').src = p.imageUrl;
         document.getElementById('image-preview-container').style.display = 'block';
         document.getElementById('image-icon').style.display = 'none';
 
-        // Hide remove button for existing images since we don't have DELETE endpoint logic for single files yet
         const btn = document.getElementById('remove-image-btn');
-        if (btn) btn.style.display = 'none';
+        if (btn) btn.style.display = 'flex';
     }
 
     if (p.videoUrl) {
@@ -375,22 +384,17 @@ function editProject(id) {
             videoPlayer.src = p.videoUrl;
             videoPlayer.style.display = 'block';
         }
+        const videoContainer = document.getElementById('video-preview-container');
         if (videoContainer) videoContainer.style.display = 'block';
+
+        const videoIcon = document.getElementById('video-icon');
         if (videoIcon) videoIcon.style.display = 'none';
 
         const btn = document.getElementById('remove-video-btn');
-        if (btn) btn.style.display = 'none';
+        if (btn) btn.style.display = 'flex';
     }
 
-    if (p.documentUrls && p.documentUrls.length > 0) {
-        const ul = document.getElementById('docs-preview-list');
-        ul.innerHTML = '';
-        p.documentUrls.forEach(docUrl => {
-            const parts = docUrl.split('/');
-            const name = parts[parts.length - 1].split('_').pop();
-            ul.innerHTML += `<li style="position:relative; padding:8px 30px 8px 8px; background:rgba(250, 116, 43, 0.05); margin-bottom:6px; border-radius:6px; font-size:0.85rem; color:var(--primary); font-weight:500;">📄 ${name}</li>`;
-        });
-    }
+    renderDocsList();
 
     document.getElementById('project-modal-title').textContent = "Editar Proyecto";
     openModal('project-modal');
@@ -433,6 +437,12 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
             for (let i = 0; i < docsInput.files.length; i++) {
                 formData.append('DocumentFiles', docsInput.files[i]);
             }
+        }
+
+        formData.append('RemoveExistingImage', removeExistingImage);
+        formData.append('RemoveExistingVideo', removeExistingVideo);
+        if (keptDocumentUrls.length > 0) {
+            formData.append('KeptDocumentUrls', keptDocumentUrls.join(','));
         }
 
         btn.disabled = true;
@@ -504,6 +514,7 @@ document.getElementById('remove-image-btn').addEventListener('click', function (
     e.preventDefault();
     e.stopPropagation();
     document.getElementById('project-image').value = ""; // clear file
+    removeExistingImage = true;
     document.getElementById('image-preview-container').style.display = 'none';
     document.getElementById('image-icon').style.display = 'block';
 });
@@ -535,6 +546,7 @@ document.getElementById('remove-video-btn').addEventListener('click', function (
     e.preventDefault();
     e.stopPropagation();
     document.getElementById('project-video').value = ""; // clear file
+    removeExistingVideo = true;
 
     const player = document.getElementById('video-preview-player');
     if (player) {
@@ -560,11 +572,43 @@ document.getElementById('project-docs').addEventListener('change', function (e) 
 });
 
 function renderDocsList() {
-    const input = document.getElementById('project-docs');
-    const files = input.files;
     const list = document.getElementById('docs-preview-list');
     list.innerHTML = '';
 
+    // Renderizar documentos que ya estaban guardados en la nube
+    keptDocumentUrls.forEach((docUrl) => {
+        const parts = docUrl.split('/');
+        const name = parts[parts.length - 1].split('_').pop();
+
+        const li = document.createElement('li');
+        li.style.position = 'relative';
+        li.style.padding = '8px 30px 8px 8px';
+        li.style.background = 'rgba(79, 70, 229, 0.05)';
+        li.style.marginBottom = '6px';
+        li.style.borderRadius = '6px';
+        li.textContent = "☁️ " + name;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove-file-btn';
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848" viewBox="2 2 20 20"><path d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z"></path><path d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z"></path></svg>`;
+        btn.style.transform = 'none';
+        btn.style.top = '50%';
+        btn.style.transform = 'translateY(-50%)';
+        btn.style.right = '4px';
+
+        btn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            keptDocumentUrls = keptDocumentUrls.filter(u => u !== docUrl);
+            renderDocsList();
+        };
+
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+
+    const files = currentDocsTransfer.files;
     if (files.length > 0) {
         for (let i = 0; i < files.length; i++) {
             const li = document.createElement('li');
@@ -662,6 +706,9 @@ function closeModal(id) {
 
             document.getElementById('docs-preview-list').innerHTML = '';
             currentDocsTransfer = new DataTransfer();
+            keptDocumentUrls = [];
+            removeExistingImage = false;
+            removeExistingVideo = false;
 
             const btn1 = document.getElementById('remove-image-btn');
             if (btn1) btn1.style.display = 'flex'; // reset default

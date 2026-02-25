@@ -146,7 +146,7 @@ public class ProjectsController : ControllerBase
 
     // PUT: Editar Proyecto
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(string id, [FromBody] Project updatedProject, [FromQuery] string adminId)
+    public async Task<IActionResult> Update(string id, [FromForm] UpdateProjectDto dto, [FromQuery] string adminId)
     {
         var user = await _usersService.GetByIdAsync(adminId);
         if (user == null || user.Role != "Administrador")
@@ -157,17 +157,58 @@ public class ProjectsController : ControllerBase
         var existing = await _projectsService.GetByIdAsync(id);
         if (existing == null) return NotFound("Proyecto no encontrado.");
 
-        var categoryExists = await _categoriesService.GetByIdAsync(updatedProject.CategoryId);
+        var categoryExists = await _categoriesService.GetByIdAsync(dto.CategoryId);
         if (categoryExists == null) return BadRequest(new { message = "La categoría no existe." });
 
-        updatedProject.Id = existing.Id;
+        existing.Title = dto.Title;
+        existing.CategoryId = dto.CategoryId;
+        existing.Description = dto.Description ?? "";
+        existing.TeamMembers = dto.TeamMembers ?? "";
 
-        // Mantenemos los archivos viejos si no estamos editándolos
-        updatedProject.ImageUrl = existing.ImageUrl;         // <--- Mantiene Imagen
-        updatedProject.VideoUrl = existing.VideoUrl;         // <--- Mantiene Video
-        updatedProject.DocumentUrls = existing.DocumentUrls; // <--- Mantiene Docs (PLURAL)
+        if (dto.ImageFile != null)
+        {
+            existing.ImageUrl = await _fileStorage.SaveFileAsync(dto.ImageFile, "images");
+        }
+        else if (dto.RemoveExistingImage)
+        {
+            existing.ImageUrl = "";
+        }
 
-        await _projectsService.UpdateAsync(id, updatedProject);
+        if (dto.VideoFile != null)
+        {
+            existing.VideoUrl = await _fileStorage.SaveFileAsync(dto.VideoFile, "videos");
+        }
+        else if (dto.RemoveExistingVideo)
+        {
+            existing.VideoUrl = "";
+        }
+
+        var newDocs = new List<string>();
+
+        if (existing.DocumentUrls != null && !string.IsNullOrEmpty(dto.KeptDocumentUrls))
+        {
+            var kept = dto.KeptDocumentUrls.Split(',').Select(k => k.Trim()).ToList();
+            foreach (var doc in existing.DocumentUrls)
+            {
+                if (kept.Any(k => k.EndsWith(doc) || doc.EndsWith(k))) 
+                {
+                    newDocs.Add(doc);
+                }
+            }
+        }
+
+        if (dto.DocumentFiles != null && dto.DocumentFiles.Count > 0)
+        {
+            foreach (var doc in dto.DocumentFiles)
+            {
+                var url = await _fileStorage.SaveFileAsync(doc, "documents");
+                newDocs.Add(url);
+            }
+        }
+
+        existing.DocumentUrls = newDocs;
+
+        await _projectsService.UpdateAsync(id, existing);
 
         return Ok(new { message = "Proyecto actualizado correctamente." });
     }

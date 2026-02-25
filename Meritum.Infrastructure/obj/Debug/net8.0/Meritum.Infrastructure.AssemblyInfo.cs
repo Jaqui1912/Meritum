@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Meritum.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a70352715567724aca8ba0caf6bdcae93bafbc46")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+274216eead46a82c82446f75948e0c59ac03b0ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("Meritum.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Meritum.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
