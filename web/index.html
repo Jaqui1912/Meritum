@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meritum - Panel de Administración</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Boxicons for Modern Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NOTIFICACIONES TOAST -->
+    <div id="toast-container"></div>
+
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-screen" class="screen active">
+        <div class="login-wrapper">
+            <div class="login-panel glass-panel">
+                <div class="logo-container">
+                    <div class="logo-icon"><i class='bx bxs-shield-alt-2'></i></div>
+                    <h1>Meritum Admin</h1>
+                    <p>Acceso seguro al sistema central</p>
+                </div>
+
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="email"><i class='bx bx-envelope'></i> Correo Electrónico</label>
+                        <input type="email" id="email" required placeholder="admin@meritum.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="password"><i class='bx bx-lock-alt'></i> Contraseña</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Iniciar Sesión</span>
+                        <i class='bx bx-right-arrow-alt'></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL (DASHBOARD) -->
+    <div id="dashboard-screen" class="screen">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <div class="logo-icon small"><i class='bx bxs-shield-alt-2'></i></div>
+                <h2>Meritum</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-view="projects"><i class='bx bx-folder'></i> Proyectos</li>
+                <li data-view="categories"><i class='bx bx-category'></i> Categorías</li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn btn-danger btn-block">
+                    <i class='bx bx-log-out'></i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar glass-panel">
+                <h2 id="current-view-title">Gestión de Proyectos</h2>
+                <div class="user-profile">
+                    <div class="avatar"><i class='bx bxs-user'></i></div>
+                    <span id="user-role-label">Administrador</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+
+                <!-- MAIN VIEW: PROJECTS -->
+                <div id="view-projects" class="view-section active">
+                    <div class="action-bar glass-panel">
+                        <div class="search-box">
+                            <i class='bx bx-search'></i>
+                            <input type="text" id="search-project" placeholder="Buscar proyectos...">
+                        </div>
+                        <div class="filter-box">
+                            <select id="filter-category">
+                                <option value="">Todas las categorías</option>
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="openModal('project-modal')">
+                            <i class='bx bx-plus'></i> Nuevo Proyecto
+                        </button>
+                    </div>
+
+                    <div class="table-container glass-panel">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Portada</th>
+                                    <th>Título</th>
+                                    <th>Categoría</th>
+                                    <th>Video</th>
+                                    <th>Documentos</th>
+                                    <th>Integrantes</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projects-table-body">
+                                <!-- Filas dinámicas de proyectos -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- MAIN VIEW: CATEGORIES -->
+                <div id="view-categories" class="view-section">
+                    <div class="action-bar glass-panel">
+                        <h3 class="section-subtitle">Categorías Existentes</h3>
+                        <button class="btn btn-primary" onclick="openModal('category-modal')">
+                            <i class='bx bx-plus'></i> Nueva Categoría
+                        </button>
+                    </div>
+
+                    <div class="table-container glass-panel">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre de Categoría</th>
+                                    <th>ID</th>
+                                    <th style="width: 150px; text-align: center;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                                <!-- Filas dinámicas de categorías -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: CREAR/EDITAR PROYECTO -->
+    <div id="project-modal" class="modal-overlay">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3 id="project-modal-title">Nuevo Proyecto</h3>
+                <button class="close-btn" onclick="closeModal('project-modal')"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="project-form">
+                    <input type="hidden" id="project-id" value="">
+
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="project-title">Título del Proyecto *</label>
+                            <input type="text" id="project-title" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="project-category">Categoría *</label>
+                            <select id="project-category" required>
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="project-members">Integrantes (separados por coma)</label>
+                        <input type="text" id="project-members" placeholder="Ej. Juan Pérez, María Gómez">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="project-desc">Descripción</label>
+                        <textarea id="project-desc" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-grid files-grid">
+                        <div class="file-upload-box">
+                            <label>Imagen de Portada</label>
+                            <div class="upload-area" id="image-upload-area">
+                                <i class='bx bx-image-add' id="image-icon"></i>
+                                <div id="image-preview-container" style="position:relative; display:none; z-index:20;">
+                                    <img id="image-preview" class="file-preview-img" />
+                                    <button type="button" class="remove-file-btn" id="remove-image-btn"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848"
+                                            viewBox="2 2 20 20">
+                                            <path
+                                                d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z">
+                                            </path>
+                                            <path
+                                                d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z">
+                                            </path>
+                                        </svg></button>
+                                </div>
+                                <input type="file" id="project-image" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="file-upload-box">
+                            <label>Video Promocional</label>
+                            <div class="upload-area" id="video-upload-area">
+                                <i class='bx bx-video-plus' id="video-icon"></i>
+                                <div id="video-preview-container"
+                                    style="position:relative; display:none; width:100%; padding-top:10px; z-index:20;">
+                                    <video id="video-preview-player" controls
+                                        style="max-width:100%; max-height:160px; border-radius:8px; display:block; margin: 0 auto;"></video>
+                                    <button type="button" class="remove-file-btn" id="remove-video-btn"
+                                        style="top:10px; right:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                            height="20" fill="#484848" viewBox="2 2 20 20">
+                                            <path
+                                                d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z">
+                                            </path>
+                                            <path
+                                                d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z">
+                                            </path>
+                                        </svg></button>
+                                </div>
+                                <input type="file" id="project-video" accept="video/mp4,video/x-m4v,video/*">
+                            </div>
+                        </div>
+                        <div class="file-upload-box full-width" style="border: none; padding: 0;">
+                            <label>Documentos (PDFs, Word)</label>
+
+                            <!-- Lista visual de documentos -->
+                            <ul id="docs-preview-list" class="docs-list" style="margin-bottom: 15px;"></ul>
+
+                            <!-- Botón para añadir más -->
+                            <div class="upload-area docs-add-area"
+                                style="padding: 1rem; border-style: dashed; border-radius: 12px; cursor: pointer;">
+                                <div style="position:relative; display:inline-block; width: 48px; height: 56px;">
+                                    <i class='bx bx-file-blank'
+                                        style="font-size: 3rem; color: #9CA3AF; position:absolute; top:0; left:0; width:100%; text-align:center; margin:0;"></i>
+                                    <div
+                                        style="position:absolute; bottom: 0px; right: -4px; background:#10B981; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <i class='bx bx-plus' style="font-size: 16px; margin:0;"></i>
+                                    </div>
+                                </div>
+                                <input type="file" id="project-docs" multiple accept=".pdf,.doc,.docx,.xlsx"
+                                    style="position:absolute; inset:0; opacity:0; cursor:pointer; z-index:10;">
+                            </div>
+                            <small style="display:block; margin-top:5px; color:#6B7280;">Puedes seleccionar múltiples
+                                archivos a la vez.</small>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeModal('project-modal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="save-project-btn">Guardar Proyecto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREAR/EDITAR CATEGORÍA -->
+    <div id="category-modal" class="modal-overlay">
+        <div class="modal glass-panel small-modal">
+            <div class="modal-header">
+                <h3 id="category-modal-title">Nueva Categoría</h3>
+                <button class="close-btn" onclick="closeModal('category-modal')"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="category-form">
+                    <input type="hidden" id="category-id" value="">
+                    <div class="input-group">
+                        <label for="category-name">Nombre de la Categoría *</label>
+                        <input type="text" id="category-name" required placeholder="Ej. Ciencias Básicas">
+                    </div>
+                    <div class="input-group">
+                        <label for="category-icon">Ícono (Clase de Boxicons) *</label>
+                        <input type="text" id="category-icon" required placeholder="Ej. bx-code-alt, bx-brain">
+                        <small style="color:var(--text-light); margin-top:5px; display:block;">Busca íconos en <a
+                                href="https://boxicons.com/" target="_blank"
+                                style="color:var(--primary)">boxicons.com</a></small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="closeModal('category-modal')">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="save-category-btn">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

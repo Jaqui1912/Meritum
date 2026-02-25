@@ -50,7 +50,32 @@ public class AuthController : ControllerBase
         var users = await _usersService.GetAllAsync();
         return Ok(users);
     }
+    
+    // 4. ADMIN LOGIN (Para el panel web de administración)
+    [HttpPost("admin-login")]
+    public async Task<IActionResult> AdminLogin([FromBody] AdminLoginRequest request)
+    {
+        var user = await _usersService.GetByEmailAsync(request.Email);
+        
+        if (user == null)
+            return Unauthorized(new { message = "Credenciales incorrectas." });
+            
+        if (user.Role != "Administrador")
+            return StatusCode(403, new { message = "Acceso denegado. No tienes permisos de administrador." });
+            
+        // En un proyecto real aquí deberías usar BCrypt u otro hashing para comparar
+        // Por ahora, se compara texto plano (ya que lo solicitaron rápido) o puedes hashearlo al crear el seed
+        if (user.Password != request.Password)
+            return Unauthorized(new { message = "Credenciales incorrectas." });
+            
+        return Ok(user);
+    }
 }
 
-// Clase auxiliar para recibir el JSON del login
+// Clases auxiliares para recibir el JSON del login
 public class LoginRequest { public string Email { get; set; } }
+public class AdminLoginRequest 
+{ 
+    public string Email { get; set; } 
+    public string Password { get; set; } 
+}
