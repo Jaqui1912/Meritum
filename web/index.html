@@ -183,7 +183,7 @@
                             <label>Imagen de Portada</label>
                             <div class="upload-area" id="image-upload-area">
                                 <i class='bx bx-image-add' id="image-icon"></i>
-                                <div id="image-preview-container" style="position:relative; display:none;">
+                                <div id="image-preview-container" style="position:relative; display:none; z-index:20;">
                                     <img id="image-preview" class="file-preview-img" />
                                     <button type="button" class="remove-file-btn" id="remove-image-btn"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848"
@@ -204,7 +204,7 @@
                             <div class="upload-area" id="video-upload-area">
                                 <i class='bx bx-video-plus' id="video-icon"></i>
                                 <div id="video-preview-container"
-                                    style="position:relative; display:none; width:100%; padding-top:10px;">
+                                    style="position:relative; display:none; width:100%; padding-top:10px; z-index:20;">
                                     <video id="video-preview-player" controls
                                         style="max-width:100%; max-height:160px; border-radius:8px; display:block; margin: 0 auto;"></video>
                                     <button type="button" class="remove-file-btn" id="remove-video-btn"
@@ -229,15 +229,17 @@
 
                             <!-- Botón para añadir más -->
                             <div class="upload-area docs-add-area"
-                                style="padding: 1rem; border-style: dashed; border-radius: 12px;">
-                                <div style="position:relative; display:inline-block;">
-                                    <i class='bx bx-file-blank' style="font-size: 2.5rem; color: #9CA3AF;"></i>
+                                style="padding: 1rem; border-style: dashed; border-radius: 12px; cursor: pointer;">
+                                <div style="position:relative; display:inline-block; width: 48px; height: 56px;">
+                                    <i class='bx bx-file-blank'
+                                        style="font-size: 3rem; color: #9CA3AF; position:absolute; top:0; left:0; width:100%; text-align:center; margin:0;"></i>
                                     <div
-                                        style="position:absolute; bottom:-5px; right:-5px; background:#10B981; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:14px; border:2px solid white;">
-                                        <i class='bx bx-plus'></i>
+                                        style="position:absolute; bottom: 0px; right: -4px; background:#10B981; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <i class='bx bx-plus' style="font-size: 16px; margin:0;"></i>
                                     </div>
                                 </div>
-                                <input type="file" id="project-docs" multiple accept=".pdf,.doc,.docx,.xlsx">
+                                <input type="file" id="project-docs" multiple accept=".pdf,.doc,.docx,.xlsx"
+                                    style="position:absolute; inset:0; opacity:0; cursor:pointer; z-index:10;">
                             </div>
                             <small style="display:block; margin-top:5px; color:#6B7280;">Puedes seleccionar múltiples
                                 archivos a la vez.</small>
