@@ -686,7 +686,12 @@ function closeModal(id) {
         modal.classList.remove('active');
         // si es un form, lo limpiamos al cerrar
         const form = modal.querySelector('form');
-        if (form) form.reset();
+        if (form) {
+            form.reset();
+            // Los campos hidden no se limpian con form.reset(), hay que forzarlos
+            const hiddenId = form.querySelector('input[type="hidden"]');
+            if (hiddenId) hiddenId.value = '';
+        }
 
         // Limpieza visual extra si es proyecto
         if (id === 'project-modal') {

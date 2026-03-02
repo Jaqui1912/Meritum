@@ -223,21 +223,11 @@ textarea:focus {
     margin-bottom: 2.5rem;
 }
 
-.logo-icon {
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, var(--secondary), var(--primary));
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.logo-image.main-logo {
+    width: 64px;
+    height: auto;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(250, 116, 43, 0.3);
-}
-
-.logo-icon i {
-    color: white;
-    font-size: 2rem;
+    filter: drop-shadow(0 4px 15px rgba(250, 116, 43, 0.3));
 }
 
 /* --- DASHBOARD LAYOUT --- */
@@ -275,15 +265,10 @@ textarea:focus {
     margin-bottom: 3rem;
 }
 
-.logo-icon.small {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 0;
-    border-radius: 12px;
-}
-
-.logo-icon.small i {
-    font-size: 1.5rem;
+.logo-image.sidebar-logo {
+    width: 44px;
+    height: auto;
+    border-radius: 8px;
 }
 
 .nav-links {
