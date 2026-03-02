@@ -17,6 +17,7 @@ builder.Services.AddSingleton<CategoriesService>();
 builder.Services.AddSingleton<ProjectsService>();
 builder.Services.AddSingleton<EvaluationsService>();
 builder.Services.AddSingleton<UsersService>();
+builder.Services.AddSingleton<CommentsService>();
 builder.Services.AddScoped<Meritum.Infrastructure.Services.FileStorageService>();
 // ---------------------------------------------------------
 // 3. Configuración de CORS (¡Vital para que el Frontend se conecte!)

@@ -55,6 +55,8 @@ public class EvaluationsController : ControllerBase
         // Lo redondeamos a 1 decimal (Ejemplo: 8.625 se convierte en 8.6)
         newEvaluation.FinalScore = Math.Round(newEvaluation.FinalScore, 1);
 
+        newEvaluation.CreatedAt = DateTime.UtcNow;
+
         // 5. Guardamos en la Base de Datos
         await _evaluationsService.CreateAsync(newEvaluation);
         
@@ -88,6 +90,16 @@ public class EvaluationsController : ControllerBase
         int totalEvaluaciones = historial.Count;
         double promedioOtorgado = historial.Average(x => x.FinalScore);
 
+        var allProjects = await _projectsService.GetAllAsync();
+
+        var historyWithNames = historial.Select(h => new
+        {
+            projectId = h.ProjectId,
+            projectTitle = allProjects.FirstOrDefault(p => p.Id == h.ProjectId)?.Title ?? "Proyecto Eliminado",
+            finalScore = h.FinalScore,
+            createdAt = h.CreatedAt
+        }).ToList();
+
         // 3. Devolver todo junto: Historial + Estadísticas
         return Ok(new
         {
@@ -96,7 +108,7 @@ public class EvaluationsController : ControllerBase
                 totalEvaluations = totalEvaluaciones,
                 averageGiven = Math.Round(promedioOtorgado, 1) // Ej: 8.5
             },
-            history = historial // La lista de proyectos que evaluó
+            history = historyWithNames // La lista de proyectos que evaluó formateada
         });
     }
     // GET: api/Evaluations (¡NUEVO! Ver todas las calificaciones del sistema)

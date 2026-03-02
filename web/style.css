@@ -224,7 +224,7 @@ textarea:focus {
 }
 
 .logo-image.main-logo {
-    width: 64px;
+    width: 250px;
     height: auto;
     margin-bottom: 1rem;
     filter: drop-shadow(0 4px 15px rgba(250, 116, 43, 0.3));
@@ -266,9 +266,9 @@ textarea:focus {
 }
 
 .logo-image.sidebar-logo {
-    width: 44px;
+    width: 200px;
     height: auto;
-    border-radius: 8px;
+    border-radius: 2px;
 }
 
 .nav-links {
