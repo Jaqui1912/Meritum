@@ -31,4 +31,8 @@ public class UsersService
     // 4. Obtener TODOS (Para el Admin y pruebas)
     public async Task<List<User>> GetAllAsync() =>
         await _usersCollection.Find(_ => true).ToListAsync();
+
+    // 5. Actualizar Usuario
+    public async Task UpdateAsync(string id, User updatedUser) =>
+        await _usersCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
 }

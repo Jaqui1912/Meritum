@@ -1,0 +1,97 @@
+# Instrucciones para el Equipo de Backend 🛠️
+
+Este documento describe los cambios necesarios (y los que ya se implementaron localmente durante esta sesión de desarrollo) en el proyecto ASP.NET Core (`Meritum.API`). Asegúrate de que tu versión principal en el servidor contenga las siguientes características para soportar la nueva UI "tipo AppStore".
+
+---
+
+## 1. Módulo de Comentarios (Nuevo)
+
+### Entidad [Comment](file:///c:/Users/angel/Meritum_movil/expo_meritum/src/services/api.ts#177-186) ([Meritum.Core/Entities/Comment.cs](file:///c:/Users/angel/Meritum_movil/Meritum.Core/Entities/Comment.cs))
+Necesitamos una colección en MongoDB para almacenar las reseñas asociadas a los proyectos.
+```csharp
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Meritum.Core.Entities
+{
+    public class Comment
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+
+        public string ProjectId { get; set; } = null!;
+        public string UserId { get; set; } = null!;
+        public string? UserName { get; set; }
+        public string Content { get; set; } = null!;
+        public int? Rating { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+}
+```
+
+### Endpoints (Controller)
+La UI Móvil ahora consume los siguientes endpoints bajo `/api/Comments`:
+- **`GET /api/Comments/project/{projectId}`**: Devuelve la lista de comentarios asociados a un proyecto. 
+- **`POST /api/Comments`**: Permite al usuario enviar un nuevo comentario. Recibe un objeto [Comment](file:///c:/Users/angel/Meritum_movil/expo_meritum/src/services/api.ts#177-186) y devuelve el objeto creado.
+
+---
+
+## 2. Ajustes en Módulo de Evaluaciones
+
+### Corrección en el Historial ([GetHistoryByUser](file:///c:/Users/angel/Meritum_movil/Meritum.API/Controllers/EvaluationsController.cs#70-114))
+El endpoint `/api/Evaluations/user/{userId}` estaba devolviendo arreglos en donde el nombre del proyecto no se incluía, causando que en la app se viera repetido el texto *"Evaluación #N"*. 
+
+**Modificación requerida:** 
+En el método [GetHistoryByUser](file:///c:/Users/angel/Meritum_movil/Meritum.API/Controllers/EvaluationsController.cs#70-114), antes de retornar el resumen, se debe hacer un `.Select()` usando los datos de [ProjectsService](file:///c:/Users/angel/Meritum_movil/Meritum.Infrastructure/Services/ProjectsService.cs#10-70) para incrustar el `projectTitle`:
+```csharp
+var historyWithNames = historial.Select(h => new
+{
+    h.Id,
+    // ... demas propiedades ...
+    h.FinalScore,
+    projectTitle = allProjects.FirstOrDefault(p => p.Id == h.ProjectId)?.Title ?? "Proyecto Eliminado",
+    createdAt = h.CreatedAt
+}).ToList();
+```
+
+### Formato de Fecha Estricto
+Al crear una evaluación (en el POST de `/api/Evaluations`), asegúrate de forzar la fecha UTC para evitar desajustes horarios (y NaN en móviles):
+`newEvaluation.CreatedAt = DateTime.UtcNow;`
+
+---
+
+### 4. Endpoint para Actualizar Perfil (`PUT /api/Auth/{id}`)
+Actualmente, el perfil solo se puede leer, pero la UI del cliente ya soporta la vista para **Editar Perfil**.
+Se requiere un endpoint que permita actualizar los datos del usuario:
+```http
+PUT /api/Auth/{id}
+Content-Type: application/json
+
+{
+  "name": "Nuevo Nombre del Usuario",
+  "email": "correo@ejemplo.com"
+}
+```
+**Nota:** Actualmente, en móvil, los cambios se están guardando localmente (mock) hasta que este endpoint esté disponible.
+
+### 5. Configuración de URLs de Documentos ([ProjectsController](file:///c:/Users/angel/Meritum_movil/Meritum.API/Controllers/ProjectsController.cs#16-27))
+La UI Móvil asume que el backend entrega las URLs de los documentos en formato de enlace web o rutado desde AWS/Azure/Render o estático, como string en `documentUrls`. La app web/móvil se encarga ahora de extraer el subtítulo final de esa URL (Ej. `guid_documento.pdf` -> `documento.pdf`).
+
+> [!TIP]
+> **No es necesario hacer modificaciones pesadas aquí**, simplemente asegúrate de que el backend siga enviando las URL válidas (https://...) que el visualizador del frontend pueda invocar mediante `WebBrowser`.
+
+---
+
+## 3. Separación de Login y Registro (Nuevo Requerimiento)
+
+El cliente ya no soporta la creación automática de cuentas dentro del endpoint de **Login**. Por favor, realiza los siguientes ajustes en [AuthController](file:///c:/Users/angel/Meritum_movil/Meritum.API/Controllers/AuthController.cs#5-74):
+
+1. **`POST /api/Auth/login`**:
+   - Solo debe recibir `email` y `password`.
+   - Si el usuario **no existe** o la contraseña **es incorrecta**, debe devolver un error HTTP `401 Unauthorized` o `404 Not Found` en lugar de crear la cuenta.
+   
+2. **`POST /api/Auth/register`** (Nuevo):
+   - Debe recibir `email`, `name`, y `password`.
+   - El campo `name` es **obligatorio** (ya no puede asumir nada por omisión).
+   - Este endpoint se encargará exclusivamente de crear los usuarios nuevos.
