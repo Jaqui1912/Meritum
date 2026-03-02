@@ -25,4 +25,7 @@ public class Evaluation
 
     // Promedio final calculado por el Backend
     public double FinalScore { get; set; } 
+
+    // Fecha en la que se realizó la evaluación
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

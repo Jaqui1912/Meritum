@@ -73,9 +73,9 @@ public class AuthController : ControllerBase
 }
 
 // Clases auxiliares para recibir el JSON del login
-public class LoginRequest { public string Email { get; set; } }
+public class LoginRequest { public string Email { get; set; } = null!; }
 public class AdminLoginRequest 
 { 
-    public string Email { get; set; } 
-    public string Password { get; set; } 
+    public string Email { get; set; } = null!;
+    public string Password { get; set; } = null!;
 }

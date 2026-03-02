@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JmZ7BHvUb+k=",
+  "dgSpecHash": "htmU/kCU2bw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
+  "projectFilePath": "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\angel\\.nuget\\packages\\mongodb.bson\\2.25.0\\mongodb.bson.2.25.0.nupkg.sha512",
     "C:\\Users\\angel\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",

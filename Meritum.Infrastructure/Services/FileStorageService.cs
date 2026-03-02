@@ -16,7 +16,7 @@ public class FileStorageService
 
     public async Task<string> SaveFileAsync(IFormFile file, string folderName)
     {
-        if (file == null || file.Length == 0) return null;
+        if (file == null || file.Length == 0) return string.Empty;
 
         // Lógica blindada para encontrar la carpeta wwwroot
         string webRoot = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
