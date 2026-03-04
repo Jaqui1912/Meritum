@@ -9,37 +9,37 @@ namespace Meritum.API.Controllers;
 public class CommentsController : ControllerBase
 {
     private readonly CommentsService _commentsService;
-    private readonly ProjectsService _projectsService;
 
-    public CommentsController(CommentsService commentsService, ProjectsService projectsService)
+    public CommentsController(CommentsService commentsService)
     {
         _commentsService = commentsService;
-        _projectsService = projectsService;
     }
 
-    // POST: /api/Comments
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Comment newComment)
-    {
-        var project = await _projectsService.GetByIdAsync(newComment.ProjectId);
-        if (project == null) return BadRequest(new { message = "El proyecto a comentar no existe." });
-
-        // Aseguramos que se guarde con el timestamp exacto del servidor.
-        newComment.CreatedAt = DateTime.UtcNow;
-
-        await _commentsService.CreateAsync(newComment);
-
-        return Ok(new { message = "Comentario registrado exitosamente.", comment = newComment });
-    }
-
-    // GET: /api/Comments/project/{projectId}
     [HttpGet("project/{projectId}")]
     public async Task<IActionResult> GetByProject(string projectId)
     {
-        var project = await _projectsService.GetByIdAsync(projectId);
-        if (project == null) return NotFound(new { message = "El proyecto no existe." });
-
         var comments = await _commentsService.GetByProjectIdAsync(projectId);
         return Ok(comments);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] Comment newComment)
+    {
+        if (string.IsNullOrEmpty(newComment.ProjectId) || string.IsNullOrEmpty(newComment.UserId))
+        {
+            return BadRequest(new { message = "ProjectId y UserId son obligatorios." });
+        }
+
+        newComment.CreatedAt = DateTime.UtcNow;
+        await _commentsService.CreateAsync(newComment);
+
+        return Ok(newComment);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        await _commentsService.RemoveAsync(id);
+        return Ok(new { message = "Comentario eliminado." });
     }
 }

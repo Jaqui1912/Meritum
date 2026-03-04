@@ -19,13 +19,13 @@ public class Evaluation
     public double Arquitectura { get; set; }
     public double UXUI { get; set; }
     public double MVP { get; set; }
-    public double AnálisisMercado { get; set; }
+    public double AnalisisMercado { get; set; }
     public double ObjetivosInteligentes { get; set; }
-    public double Innovación { get; set; }
+    public double Innovacion { get; set; }
 
     // Promedio final calculado por el Backend
     public double FinalScore { get; set; } 
 
-    // Fecha en la que se realizó la evaluación
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // Fecha de creación
+    public DateTime CreatedAt { get; set; }
 }

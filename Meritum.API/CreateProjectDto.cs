@@ -12,8 +12,8 @@ public class CreateProjectDto
     // 📸 1. NUEVO: El archivo de la imagen de portada
     public IFormFile? ImageFile { get; set; }
 
-    // El video
-    public IFormFile? VideoFile { get; set; } 
+    // Los videos (Lista - soporta múltiples videos)
+    public List<IFormFile>? VideoFiles { get; set; } 
 
     // Los documentos (Lista)
     public List<IFormFile>? DocumentFiles { get; set; } 

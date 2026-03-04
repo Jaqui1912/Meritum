@@ -18,7 +18,9 @@ public class Project
 
     // 👇 CAMPOS NUEVOS QUE FALTABAN
     public string? ImageUrl { get; set; }      // Portada
-    public string? VideoUrl { get; set; }      // Video
+
+    // 👇 SOPORTE MULTI-VIDEO (Lista de URLs)
+    public List<string>? VideoUrls { get; set; } = new List<string>();
 
     // 👇 ESTE DEBE SER LISTA (List<string>) y PLURAL (Urls)
     public List<string>? DocumentUrls { get; set; } = new List<string>(); 

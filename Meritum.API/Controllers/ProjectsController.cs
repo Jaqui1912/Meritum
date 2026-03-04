@@ -39,7 +39,15 @@ public class ProjectsController : ControllerBase
         foreach (var p in projects)
         {
             if (!string.IsNullOrEmpty(p.ImageUrl)) p.ImageUrl = baseUrl + p.ImageUrl;
-            if (!string.IsNullOrEmpty(p.VideoUrl)) p.VideoUrl = baseUrl + p.VideoUrl;
+
+            // Multi-video: transformar cada URL de video
+            if (p.VideoUrls != null && p.VideoUrls.Count > 0)
+            {
+                var fullVideos = new List<string>();
+                foreach (var v in p.VideoUrls) fullVideos.Add(baseUrl + v);
+                p.VideoUrls = fullVideos;
+            }
+
             if (p.DocumentUrls != null && p.DocumentUrls.Count > 0)
             {
                 var fullLinks = new List<string>();
@@ -65,8 +73,13 @@ public class ProjectsController : ControllerBase
         if (!string.IsNullOrEmpty(project.ImageUrl))
             project.ImageUrl = baseUrl + project.ImageUrl;
 
-        if (!string.IsNullOrEmpty(project.VideoUrl))
-            project.VideoUrl = baseUrl + project.VideoUrl;
+        // Multi-video
+        if (project.VideoUrls != null && project.VideoUrls.Count > 0)
+        {
+            var fullVideos = new List<string>();
+            foreach (var v in project.VideoUrls) fullVideos.Add(baseUrl + v);
+            project.VideoUrls = fullVideos;
+        }
 
         if (project.DocumentUrls != null && project.DocumentUrls.Count > 0)
         {
@@ -81,7 +94,7 @@ public class ProjectsController : ControllerBase
         return Ok(project);
     }
 
-    // POST: Crear Proyecto (CON IMAGEN, VIDEO Y DOCS)
+    // POST: Crear Proyecto (CON IMAGEN, VIDEOS Y DOCS)
     [HttpPost]
     public async Task<IActionResult> Create([FromForm] CreateProjectDto dto, [FromQuery] string adminId)
     {
@@ -108,11 +121,15 @@ public class ProjectsController : ControllerBase
             imageUrl = await _fileStorage.SaveFileAsync(dto.ImageFile, "images");
         }
 
-        // 2. VIDEO
-        string videoUrl = "";
-        if (dto.VideoFile != null)
+        // 2. VIDEOS (Lista - soporta múltiples)
+        List<string> uploadedVideos = new List<string>();
+        if (dto.VideoFiles != null && dto.VideoFiles.Count > 0)
         {
-            videoUrl = await _fileStorage.SaveFileAsync(dto.VideoFile, "videos");
+            foreach (var video in dto.VideoFiles)
+            {
+                var url = await _fileStorage.SaveFileAsync(video, "videos");
+                uploadedVideos.Add(url);
+            }
         }
 
         // 3. DOCUMENTOS (Lista)
@@ -135,10 +152,10 @@ public class ProjectsController : ControllerBase
             TeamMembers = dto.TeamMembers ?? "",
 
             // Asignamos las rutas
-            ImageUrl = imageUrl,       // <--- Nueva Imagen
-            VideoUrl = videoUrl,       // Video
-            DocumentUrls = uploadedDocs // Documentos en plural
-        }; // <--- ¡AQUÍ TE FALTABA CERRAR LA LLAVE ANTES!
+            ImageUrl = imageUrl,
+            VideoUrls = uploadedVideos,    // Multi-video
+            DocumentUrls = uploadedDocs
+        };
 
         await _projectsService.CreateAsync(newProject);
         return Ok(new { message = "Proyecto creado exitosamente", id = newProject.Id });
@@ -174,15 +191,33 @@ public class ProjectsController : ControllerBase
             existing.ImageUrl = "";
         }
 
-        if (dto.VideoFile != null)
+        // Multi-video: conservar videos existentes + agregar nuevos
+        var newVideos = new List<string>();
+
+        if (existing.VideoUrls != null && !string.IsNullOrEmpty(dto.KeptVideoUrls))
         {
-            existing.VideoUrl = await _fileStorage.SaveFileAsync(dto.VideoFile, "videos");
-        }
-        else if (dto.RemoveExistingVideo)
-        {
-            existing.VideoUrl = "";
+            var kept = dto.KeptVideoUrls.Split(',').Select(k => k.Trim()).ToList();
+            foreach (var vid in existing.VideoUrls)
+            {
+                if (kept.Any(k => k.EndsWith(vid) || vid.EndsWith(k)))
+                {
+                    newVideos.Add(vid);
+                }
+            }
         }
 
+        if (dto.VideoFiles != null && dto.VideoFiles.Count > 0)
+        {
+            foreach (var video in dto.VideoFiles)
+            {
+                var url = await _fileStorage.SaveFileAsync(video, "videos");
+                newVideos.Add(url);
+            }
+        }
+
+        existing.VideoUrls = newVideos;
+
+        // Documentos: conservar existentes + agregar nuevos
         var newDocs = new List<string>();
 
         if (existing.DocumentUrls != null && !string.IsNullOrEmpty(dto.KeptDocumentUrls))
