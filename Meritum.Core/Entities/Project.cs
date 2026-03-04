@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Meritum.Core.Entities;
 
+[BsonIgnoreExtraElements]
 public class Project
 {
     [BsonId]
