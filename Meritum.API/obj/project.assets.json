@@ -1428,11 +1428,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
+      "projectUniqueName": "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj",
       "projectName": "Meritum.API",
-      "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
+      "projectPath": "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj",
       "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\angel\\Meritum\\Meritum.API\\obj\\",
+      "outputPath": "C:\\Users\\angel\\Meritum\\meritum.api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1453,11 +1453,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
-              "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj"
+            "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
+              "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj"
             },
-            "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj": {
-              "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj"
+            "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj"
             }
           }
         }
