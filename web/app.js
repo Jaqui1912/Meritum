@@ -29,8 +29,9 @@ let appState = {
 };
 
 let removeExistingImage = false;
-let removeExistingVideo = false;
+let keptVideoUrls = [];
 let keptDocumentUrls = [];
+let currentVideosTransfer = new DataTransfer();
 
 // ==========================================
 // 1. INICIALIZACIÓN
@@ -306,12 +307,10 @@ function renderProjectsTable() {
             ? `<img src="${p.imageUrl}" class="project-thumbnail" alt="Thumb">`
             : `<div class="empty-thumbnail"><i class='bx bx-image'></i></div>`;
 
-        // Extraer nombre de video
+        // Extraer nombre de video(s)
         let videoStr = '<span style="color:#9CA3AF; font-size:0.8rem;">N/A</span>';
-        if (p.videoUrl) {
-            const parts = p.videoUrl.split('/');
-            const name = parts[parts.length - 1].split('_').pop(); // Quita el GUID si lo tiene (opcional, pero ayuda a leer)
-            videoStr = `<span style="font-size:0.85rem;" title="${name}">🎬 Si</span>`;
+        if (p.videoUrls && p.videoUrls.length > 0) {
+            videoStr = `<span class="badge" style="background:var(--secondary); color:#A16207;">🎬 ${p.videoUrls.length}</span>`;
         }
 
         // Documentos count
@@ -363,10 +362,12 @@ function editProject(id) {
     document.getElementById('docs-preview-list').innerHTML = '';
 
     removeExistingImage = false;
-    removeExistingVideo = false;
+    keptVideoUrls = p.videoUrls ? [...p.videoUrls] : [];
     keptDocumentUrls = p.documentUrls ? [...p.documentUrls] : [];
     currentDocsTransfer = new DataTransfer();
+    currentVideosTransfer = new DataTransfer();
     document.getElementById('project-docs').value = "";
+    document.getElementById('project-video').value = "";
 
     // Show existing image preview if available
     if (p.imageUrl) {
@@ -378,10 +379,10 @@ function editProject(id) {
         if (btn) btn.style.display = 'flex';
     }
 
-    if (p.videoUrl) {
+    if (p.videoUrls && p.videoUrls.length > 0) {
         const videoPlayer = document.getElementById('video-preview-player');
         if (videoPlayer) {
-            videoPlayer.src = p.videoUrl;
+            videoPlayer.src = p.videoUrls[0];
             videoPlayer.style.display = 'block';
         }
         const videoContainer = document.getElementById('video-preview-container');
@@ -431,7 +432,9 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
             formData.append('ImageFile', imageInput.files[0]);
         }
         if (videoInput && videoInput.files && videoInput.files.length > 0) {
-            formData.append('VideoFile', videoInput.files[0]);
+            for (let i = 0; i < videoInput.files.length; i++) {
+                formData.append('VideoFiles', videoInput.files[i]);
+            }
         }
         if (docsInput && docsInput.files) {
             for (let i = 0; i < docsInput.files.length; i++) {
@@ -440,7 +443,9 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
         }
 
         formData.append('RemoveExistingImage', removeExistingImage);
-        formData.append('RemoveExistingVideo', removeExistingVideo);
+        if (keptVideoUrls.length > 0) {
+            formData.append('KeptVideoUrls', keptVideoUrls.join(','));
+        }
         if (keptDocumentUrls.length > 0) {
             formData.append('KeptDocumentUrls', keptDocumentUrls.join(','));
         }
@@ -520,14 +525,21 @@ document.getElementById('remove-image-btn').addEventListener('click', function (
 });
 
 document.getElementById('project-video').addEventListener('change', function (e) {
-    const file = e.target.files[0];
+    const input = e.target;
     const previewContainer = document.getElementById('video-preview-container');
     const player = document.getElementById('video-preview-player');
     const icon = document.getElementById('video-icon');
     const btn = document.getElementById('remove-video-btn');
 
-    if (file) {
-        const fileUrl = URL.createObjectURL(file);
+    if (input.files && input.files.length > 0) {
+        // Accumulate videos
+        for (let i = 0; i < input.files.length; i++) {
+            currentVideosTransfer.items.add(input.files[i]);
+        }
+        input.files = currentVideosTransfer.files;
+
+        // Show first new video preview
+        const fileUrl = URL.createObjectURL(input.files[0]);
         if (player) {
             player.src = fileUrl;
             player.style.display = 'block';
@@ -545,8 +557,9 @@ document.getElementById('project-video').addEventListener('change', function (e)
 document.getElementById('remove-video-btn').addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
-    document.getElementById('project-video').value = ""; // clear file
-    removeExistingVideo = true;
+    document.getElementById('project-video').value = "";
+    keptVideoUrls = []; // Clear all kept videos from cloud
+    currentVideosTransfer = new DataTransfer(); // Clear newly added videos
 
     const player = document.getElementById('video-preview-player');
     if (player) {
