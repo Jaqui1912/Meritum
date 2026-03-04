@@ -45,9 +45,9 @@ public class EvaluationsController : ControllerBase
             newEvaluation.Arquitectura +
             newEvaluation.UXUI +
             newEvaluation.MVP +
-            newEvaluation.AnálisisMercado +
+            newEvaluation.AnalisisMercado +
             newEvaluation.ObjetivosInteligentes +
-            newEvaluation.Innovación;
+            newEvaluation.Innovacion;
 
         // Lo dividimos entre los 8 criterios
         newEvaluation.FinalScore = sumatoria / 8.0;
