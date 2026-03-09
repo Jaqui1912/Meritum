@@ -744,28 +744,19 @@ function closeModal(id) {
         if (id === 'project-modal') {
             const imgContainer = document.getElementById('image-preview-container');
             if (imgContainer) imgContainer.style.display = 'none';
-            document.getElementById('image-icon').style.display = 'block';
+            const imgIcon = document.getElementById('image-icon');
+            if (imgIcon) imgIcon.style.display = 'block';
 
-            const vidContainer = document.getElementById('video-preview-container');
-            if (vidContainer) vidContainer.style.display = 'none';
-            document.getElementById('video-icon').style.display = 'block';
-
-            const player = document.getElementById('video-preview-player');
-            if (player) {
-                player.pause();
-                player.src = "";
-            }
-
+            document.getElementById('videos-preview-list').innerHTML = '';
             document.getElementById('docs-preview-list').innerHTML = '';
+            currentVideosTransfer = new DataTransfer();
             currentDocsTransfer = new DataTransfer();
+            keptVideoUrls = [];
             keptDocumentUrls = [];
             removeExistingImage = false;
-            removeExistingVideo = false;
 
             const btn1 = document.getElementById('remove-image-btn');
-            if (btn1) btn1.style.display = 'flex'; // reset default
-            const btn2 = document.getElementById('remove-video-btn');
-            if (btn2) btn2.style.display = 'flex'; // reset default
+            if (btn1) btn1.style.display = 'flex';
         }
     }
 }
