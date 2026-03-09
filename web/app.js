@@ -354,11 +354,7 @@ function editProject(id) {
     document.getElementById('image-preview-container').style.display = 'none';
     document.getElementById('image-icon').style.display = 'block';
 
-    const videoContainer = document.getElementById('video-preview-container');
-    if (videoContainer) videoContainer.style.display = 'none';
-    const videoIcon = document.getElementById('video-icon');
-    if (videoIcon) videoIcon.style.display = 'block';
-
+    document.getElementById('videos-preview-list').innerHTML = '';
     document.getElementById('docs-preview-list').innerHTML = '';
 
     removeExistingImage = false;
@@ -379,22 +375,7 @@ function editProject(id) {
         if (btn) btn.style.display = 'flex';
     }
 
-    if (p.videoUrls && p.videoUrls.length > 0) {
-        const videoPlayer = document.getElementById('video-preview-player');
-        if (videoPlayer) {
-            videoPlayer.src = p.videoUrls[0];
-            videoPlayer.style.display = 'block';
-        }
-        const videoContainer = document.getElementById('video-preview-container');
-        if (videoContainer) videoContainer.style.display = 'block';
-
-        const videoIcon = document.getElementById('video-icon');
-        if (videoIcon) videoIcon.style.display = 'none';
-
-        const btn = document.getElementById('remove-video-btn');
-        if (btn) btn.style.display = 'flex';
-    }
-
+    renderVideosList();
     renderDocsList();
 
     document.getElementById('project-modal-title').textContent = "Editar Proyecto";
@@ -473,8 +454,12 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
             // Limpiar previews manuales en cascarilla
             document.getElementById('image-preview').style.display = 'none';
             document.getElementById('image-icon').style.display = 'block';
-            document.getElementById('video-preview-name').textContent = '';
+            document.getElementById('videos-preview-list').innerHTML = '';
             document.getElementById('docs-preview-list').innerHTML = '';
+            currentVideosTransfer = new DataTransfer();
+            currentDocsTransfer = new DataTransfer();
+            keptVideoUrls = [];
+            keptDocumentUrls = [];
 
             loadProjects();
         } else {
@@ -526,49 +511,13 @@ document.getElementById('remove-image-btn').addEventListener('click', function (
 
 document.getElementById('project-video').addEventListener('change', function (e) {
     const input = e.target;
-    const previewContainer = document.getElementById('video-preview-container');
-    const player = document.getElementById('video-preview-player');
-    const icon = document.getElementById('video-icon');
-    const btn = document.getElementById('remove-video-btn');
-
     if (input.files && input.files.length > 0) {
-        // Accumulate videos
         for (let i = 0; i < input.files.length; i++) {
             currentVideosTransfer.items.add(input.files[i]);
         }
-        input.files = currentVideosTransfer.files;
-
-        // Show first new video preview
-        const fileUrl = URL.createObjectURL(input.files[0]);
-        if (player) {
-            player.src = fileUrl;
-            player.style.display = 'block';
-        }
-        previewContainer.style.display = 'block';
-        icon.style.display = 'none';
-        if (btn) btn.style.display = 'flex';
-    } else {
-        if (player) player.src = "";
-        previewContainer.style.display = 'none';
-        icon.style.display = 'block';
     }
-});
-
-document.getElementById('remove-video-btn').addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.getElementById('project-video').value = "";
-    keptVideoUrls = []; // Clear all kept videos from cloud
-    currentVideosTransfer = new DataTransfer(); // Clear newly added videos
-
-    const player = document.getElementById('video-preview-player');
-    if (player) {
-        player.pause();
-        player.src = "";
-    }
-
-    document.getElementById('video-preview-container').style.display = 'none';
-    document.getElementById('video-icon').style.display = 'block';
+    input.files = currentVideosTransfer.files;
+    renderVideosList();
 });
 
 let currentDocsTransfer = new DataTransfer();
@@ -666,6 +615,91 @@ function removeDocFile(index) {
     currentDocsTransfer = newDt;
     input.files = currentDocsTransfer.files;
     renderDocsList(); // re-render list without the removed item
+}
+
+function renderVideosList() {
+    const list = document.getElementById('videos-preview-list');
+    list.innerHTML = '';
+
+    // Renderizar videos que ya estaban guardados en la nube
+    keptVideoUrls.forEach((vidUrl) => {
+        const parts = vidUrl.split('/');
+        const name = parts[parts.length - 1].split('_').pop();
+
+        const li = document.createElement('li');
+        li.style.position = 'relative';
+        li.style.padding = '8px 30px 8px 8px';
+        li.style.background = 'rgba(79, 70, 229, 0.05)';
+        li.style.marginBottom = '6px';
+        li.style.borderRadius = '6px';
+        li.textContent = "☁️ " + name;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove-file-btn';
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848" viewBox="2 2 20 20"><path d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z"></path><path d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z"></path></svg>`;
+        btn.style.transform = 'none';
+        btn.style.top = '50%';
+        btn.style.transform = 'translateY(-50%)';
+        btn.style.right = '4px';
+
+        btn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            keptVideoUrls = keptVideoUrls.filter(u => u !== vidUrl);
+            renderVideosList();
+        };
+
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+
+    // Renderizar videos nuevos (seleccionados localmente)
+    const files = currentVideosTransfer.files;
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const li = document.createElement('li');
+            li.style.position = 'relative';
+            li.style.padding = '8px 30px 8px 8px';
+            li.style.background = 'rgba(250, 116, 43, 0.05)';
+            li.style.marginBottom = '6px';
+            li.style.borderRadius = '6px';
+            li.textContent = "🎬 " + files[i].name;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'remove-file-btn';
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848" viewBox="2 2 20 20"><path d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z"></path><path d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z"></path></svg>`;
+            btn.style.transform = 'none';
+            btn.style.top = '50%';
+            btn.style.transform = 'translateY(-50%)';
+            btn.style.right = '4px';
+
+            btn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                removeVideoFile(i);
+            };
+
+            li.appendChild(btn);
+            list.appendChild(li);
+        }
+    }
+}
+
+function removeVideoFile(index) {
+    const input = document.getElementById('project-video');
+    const newDt = new DataTransfer();
+
+    for (let i = 0; i < currentVideosTransfer.files.length; i++) {
+        if (i !== index) {
+            newDt.items.add(currentVideosTransfer.files[i]);
+        }
+    }
+
+    currentVideosTransfer = newDt;
+    input.files = currentVideosTransfer.files;
+    renderVideosList();
 }
 
 async function deleteProject(id) {
