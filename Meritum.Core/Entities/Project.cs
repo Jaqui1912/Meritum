@@ -17,12 +17,33 @@ public class Project
     public string Description { get; set; } = null!;
     public string TeamMembers { get; set; } = null!;
 
-    // 👇 CAMPOS NUEVOS QUE FALTABAN
-    public string? ImageUrl { get; set; }      // Portada
+    public string? ImageUrl { get; set; }
 
-    // 👇 SOPORTE MULTI-VIDEO (Lista de URLs)
+    // Backward compat: lee el campo viejo "videoUrl" (string) de documentos existentes
+    [BsonElement("videoUrl")]
+    [BsonIgnoreIfNull]
+    public string? VideoUrl { get; set; }
+
+    // Multi-video (campo nuevo)
+    [BsonElement("videoUrls")]
+    [BsonIgnoreIfNull]
     public List<string>? VideoUrls { get; set; } = new List<string>();
 
-    // 👇 ESTE DEBE SER LISTA (List<string>) y PLURAL (Urls)
-    public List<string>? DocumentUrls { get; set; } = new List<string>(); 
+    public List<string>? DocumentUrls { get; set; } = new List<string>();
+
+    /// <summary>
+    /// Después de deserializar, migra VideoUrl viejo a VideoUrls si es necesario
+    /// </summary>
+    public void MigrateVideoUrl()
+    {
+        if (!string.IsNullOrEmpty(VideoUrl))
+        {
+            if (VideoUrls == null) VideoUrls = new List<string>();
+            if (!VideoUrls.Contains(VideoUrl))
+            {
+                VideoUrls.Insert(0, VideoUrl);
+            }
+            VideoUrl = null; // limpiar el campo viejo
+        }
+    }
 }

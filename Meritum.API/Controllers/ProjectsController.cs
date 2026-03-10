@@ -38,6 +38,7 @@ public class ProjectsController : ControllerBase
         // Transformamos las URLs (tu código que ya funciona perfecto)
         foreach (var p in projects)
         {
+            p.MigrateVideoUrl(); // Backward compat: videoUrl -> videoUrls
             if (!string.IsNullOrEmpty(p.ImageUrl)) p.ImageUrl = baseUrl + p.ImageUrl;
 
             // Multi-video: transformar cada URL de video
@@ -65,6 +66,8 @@ public class ProjectsController : ControllerBase
     {
         var project = await _projectsService.GetByIdAsync(id);
         if (project == null) return NotFound("Proyecto no encontrado.");
+
+        project.MigrateVideoUrl(); // Backward compat
 
         // 1. Obtenemos la dirección base
         var baseUrl = $"{Request.Scheme}://{Request.Host}";

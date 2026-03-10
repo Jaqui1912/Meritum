@@ -94,8 +94,17 @@ public class EvaluationsController : ControllerBase
 
         var historyWithNames = historial.Select(h => new
         {
+            id = h.Id,
             projectId = h.ProjectId,
             projectTitle = allProjects.FirstOrDefault(p => p.Id == h.ProjectId)?.Title ?? "Proyecto Eliminado",
+            funcionalidad = h.Funcionalidad,
+            rendimiento = h.Rendimiento,
+            arquitectura = h.Arquitectura,
+            uxui = h.UXUI,
+            mvp = h.MVP,
+            analisisMercado = h.AnalisisMercado,
+            objetivosInteligentes = h.ObjetivosInteligentes,
+            innovacion = h.Innovacion,
             finalScore = h.FinalScore,
             createdAt = h.CreatedAt
         }).ToList();
@@ -183,6 +192,16 @@ public class EvaluationsController : ControllerBase
         var allEvaluations = await _evaluationsService.GetAllAsync();
         var allProjects = await _projectsService.GetAllAsync();
 
+        // Apply video URL migration and image URL transformation to all projects once
+        foreach (var project in allProjects)
+        {
+            project.MigrateVideoUrl(); // Backward compat: videoUrl -> videoUrls
+            if (!string.IsNullOrEmpty(project.ImageUrl))
+            {
+                project.ImageUrl = baseUrl + project.ImageUrl;
+            }
+        }
+
         // 3. LA MAGIA: Agrupamos por Proyecto y sacamos el promedio global
         var rankedProjects = allEvaluations
             .GroupBy(e => e.ProjectId) // Agrupamos todas las evaluaciones que sean del mismo proyecto
@@ -202,15 +221,12 @@ public class EvaluationsController : ControllerBase
             var project = allProjects.FirstOrDefault(p => p.Id == rank.ProjectId);
             if (project != null)
             {
-                // Arreglamos el link de la foto
-                string fullImageUrl = string.IsNullOrEmpty(project.ImageUrl) ? "" : baseUrl + project.ImageUrl;
-
                 leaderboard.Add(new
                 {
                     id = project.Id,
                     title = project.Title,
                     teamMembers = project.TeamMembers,
-                    imageUrl = fullImageUrl,
+                    imageUrl = project.ImageUrl ?? "",
                     score = rank.AverageScore, // El promedio global calculado
                     totalEvaluators = rank.EvaluationCount // Ejemplo: "Calificado por 3 jueces"
                 });
