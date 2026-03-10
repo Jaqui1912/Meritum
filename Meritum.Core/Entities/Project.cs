@@ -19,13 +19,11 @@ public class Project
 
     public string? ImageUrl { get; set; }
 
-    // Backward compat: lee el campo viejo "videoUrl" (string) de documentos existentes
-    [BsonElement("videoUrl")]
+    // Backward compat: lee el campo viejo "VideoUrl" (string) de documentos existentes
     [BsonIgnoreIfNull]
     public string? VideoUrl { get; set; }
 
     // Multi-video (campo nuevo)
-    [BsonElement("videoUrls")]
     [BsonIgnoreIfNull]
     public List<string>? VideoUrls { get; set; } = new List<string>();
 
