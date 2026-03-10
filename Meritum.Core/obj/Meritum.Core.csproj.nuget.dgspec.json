@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {}
+    "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
+    "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
+        "projectUniqueName": "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
         "projectName": "Meritum.Core",
-        "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
+        "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj",
         "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\obj\\",
+        "outputPath": "c:\\Users\\angel\\Meritum\\Meritum.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

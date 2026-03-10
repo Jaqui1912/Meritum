@@ -55,6 +55,8 @@ public class ProjectsController : ControllerBase
                 foreach (var doc in p.DocumentUrls) fullLinks.Add(baseUrl + doc);
                 p.DocumentUrls = fullLinks;
             }
+
+            if (!string.IsNullOrEmpty(p.PreviewVideoUrl)) p.PreviewVideoUrl = baseUrl + p.PreviewVideoUrl;
         }
 
         return Ok(projects);
@@ -93,6 +95,9 @@ public class ProjectsController : ControllerBase
             }
             project.DocumentUrls = fullLinks;
         }
+
+        if (!string.IsNullOrEmpty(project.PreviewVideoUrl))
+            project.PreviewVideoUrl = baseUrl + project.PreviewVideoUrl;
 
         return Ok(project);
     }
@@ -146,6 +151,13 @@ public class ProjectsController : ControllerBase
             }
         }
 
+        // 4. VIDEO DE PRESENTACIÓN (~10s preview)
+        string previewVideoUrl = "";
+        if (dto.PreviewVideoFile != null)
+        {
+            previewVideoUrl = await _fileStorage.SaveFileAsync(dto.PreviewVideoFile, "previews");
+        }
+
         // D. CREAR OBJETO
         var newProject = new Project
         {
@@ -156,6 +168,7 @@ public class ProjectsController : ControllerBase
 
             // Asignamos las rutas
             ImageUrl = imageUrl,
+            PreviewVideoUrl = previewVideoUrl,
             VideoUrls = uploadedVideos,    // Multi-video
             DocumentUrls = uploadedDocs
         };
@@ -192,6 +205,16 @@ public class ProjectsController : ControllerBase
         else if (dto.RemoveExistingImage)
         {
             existing.ImageUrl = "";
+        }
+
+        // Preview video
+        if (dto.PreviewVideoFile != null)
+        {
+            existing.PreviewVideoUrl = await _fileStorage.SaveFileAsync(dto.PreviewVideoFile, "previews");
+        }
+        else if (dto.RemoveExistingPreviewVideo)
+        {
+            existing.PreviewVideoUrl = "";
         }
 
         // Multi-video: conservar videos existentes + agregar nuevos

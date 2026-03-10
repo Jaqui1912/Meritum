@@ -29,6 +29,7 @@ let appState = {
 };
 
 let removeExistingImage = false;
+let removeExistingPreviewVideo = false;
 let keptVideoUrls = [];
 let keptDocumentUrls = [];
 let currentVideosTransfer = new DataTransfer();
@@ -358,12 +359,15 @@ function editProject(id) {
     document.getElementById('docs-preview-list').innerHTML = '';
 
     removeExistingImage = false;
+    removeExistingPreviewVideo = false;
     keptVideoUrls = p.videoUrls ? [...p.videoUrls] : [];
     keptDocumentUrls = p.documentUrls ? [...p.documentUrls] : [];
     currentDocsTransfer = new DataTransfer();
     currentVideosTransfer = new DataTransfer();
     document.getElementById('project-docs').value = "";
     document.getElementById('project-video').value = "";
+    document.getElementById('project-preview-video').value = "";
+    document.getElementById('remove-existing-preview-video').value = 'false';
 
     // Show existing image preview if available
     if (p.imageUrl) {
@@ -373,6 +377,23 @@ function editProject(id) {
 
         const btn = document.getElementById('remove-image-btn');
         if (btn) btn.style.display = 'flex';
+    }
+
+    // Show existing preview video if available
+    const pvContainer = document.getElementById('preview-video-preview-container');
+    const pvPlayer = document.getElementById('preview-video-player');
+    const pvIcon = document.getElementById('preview-video-icon');
+    const pvRemoveBtn = document.getElementById('remove-preview-video-btn');
+    pvContainer.style.display = 'none';
+    pvPlayer.src = '';
+    pvIcon.style.display = 'block';
+    if (pvRemoveBtn) pvRemoveBtn.style.display = 'none';
+
+    if (p.previewVideoUrl) {
+        pvPlayer.src = p.previewVideoUrl;
+        pvContainer.style.display = 'block';
+        pvIcon.style.display = 'none';
+        if (pvRemoveBtn) pvRemoveBtn.style.display = 'flex';
     }
 
     renderVideosList();
@@ -424,6 +445,14 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
         }
 
         formData.append('RemoveExistingImage', removeExistingImage);
+
+        // Preview video
+        const previewVideoInput = document.getElementById('project-preview-video');
+        if (previewVideoInput && previewVideoInput.files && previewVideoInput.files.length > 0) {
+            formData.append('PreviewVideoFile', previewVideoInput.files[0]);
+        }
+        formData.append('RemoveExistingPreviewVideo', removeExistingPreviewVideo);
+
         if (keptVideoUrls.length > 0) {
             formData.append('KeptVideoUrls', keptVideoUrls.join(','));
         }
@@ -507,6 +536,42 @@ document.getElementById('remove-image-btn').addEventListener('click', function (
     removeExistingImage = true;
     document.getElementById('image-preview-container').style.display = 'none';
     document.getElementById('image-icon').style.display = 'block';
+});
+
+// Preview Video (presentación ~10s)
+document.getElementById('project-preview-video').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    const container = document.getElementById('preview-video-preview-container');
+    const player = document.getElementById('preview-video-player');
+    const icon = document.getElementById('preview-video-icon');
+    const btn = document.getElementById('remove-preview-video-btn');
+
+    if (file) {
+        const fileUrl = URL.createObjectURL(file);
+        player.src = fileUrl;
+        player.style.display = 'block';
+        container.style.display = 'block';
+        icon.style.display = 'none';
+        if (btn) btn.style.display = 'flex';
+    } else {
+        player.src = "";
+        container.style.display = 'none';
+        icon.style.display = 'block';
+    }
+});
+
+document.getElementById('remove-preview-video-btn').addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('project-preview-video').value = "";
+    removeExistingPreviewVideo = true;
+    document.getElementById('remove-existing-preview-video').value = 'true';
+
+    const player = document.getElementById('preview-video-player');
+    if (player) { player.pause(); player.src = ""; }
+
+    document.getElementById('preview-video-preview-container').style.display = 'none';
+    document.getElementById('preview-video-icon').style.display = 'block';
 });
 
 document.getElementById('project-video').addEventListener('change', function (e) {
@@ -746,6 +811,19 @@ function closeModal(id) {
             if (imgContainer) imgContainer.style.display = 'none';
             const imgIcon = document.getElementById('image-icon');
             if (imgIcon) imgIcon.style.display = 'block';
+
+            // Preview video cleanup
+            const pvContainer = document.getElementById('preview-video-preview-container');
+            if (pvContainer) pvContainer.style.display = 'none';
+            const pvPlayer = document.getElementById('preview-video-player');
+            if (pvPlayer) { pvPlayer.pause(); pvPlayer.src = ''; }
+            const pvIcon = document.getElementById('preview-video-icon');
+            if (pvIcon) pvIcon.style.display = 'block';
+            const pvRemoveBtn = document.getElementById('remove-preview-video-btn');
+            if (pvRemoveBtn) pvRemoveBtn.style.display = 'none';
+            removeExistingPreviewVideo = false;
+            const pvHidden = document.getElementById('remove-existing-preview-video');
+            if (pvHidden) pvHidden.value = 'false';
 
             document.getElementById('videos-preview-list').innerHTML = '';
             document.getElementById('docs-preview-list').innerHTML = '';

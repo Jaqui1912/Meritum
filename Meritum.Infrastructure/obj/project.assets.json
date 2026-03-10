@@ -968,11 +968,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
+      "projectUniqueName": "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
       "projectName": "Meritum.Infrastructure",
-      "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
+      "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
       "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\obj\\",
+      "outputPath": "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -993,8 +993,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
-              "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj"
+            "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj": {
+              "projectPath": "c:\\Users\\angel\\Meritum\\Meritum.Core\\Meritum.Core.csproj"
             }
           }
         }

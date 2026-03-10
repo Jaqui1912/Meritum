@@ -12,6 +12,9 @@ public class CreateProjectDto
     // 📸 1. NUEVO: El archivo de la imagen de portada
     public IFormFile? ImageFile { get; set; }
 
+    // 🎬 Video corto de presentación (~10 segundos)
+    public IFormFile? PreviewVideoFile { get; set; }
+
     // Los videos (Lista - soporta múltiples videos)
     public List<IFormFile>? VideoFiles { get; set; } 
 

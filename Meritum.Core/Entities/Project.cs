@@ -29,6 +29,9 @@ public class Project
 
     public List<string>? DocumentUrls { get; set; } = new List<string>();
 
+    // Video de presentación corto (~10s) para preview estilo Netflix
+    public string? PreviewVideoUrl { get; set; }
+
     /// <summary>
     /// Después de deserializar, migra VideoUrl viejo a VideoUrls si es necesario
     /// </summary>

@@ -199,6 +199,30 @@
                             </div>
                         </div>
                         <div class="file-upload-box">
+                            <label>Video de Presentación <span style="font-size:0.75rem; color:#9CA3AF;">(máx ~10
+                                    seg)</span></label>
+                            <div class="upload-area" id="preview-video-upload-area">
+                                <i class='bx bx-movie-play' id="preview-video-icon"></i>
+                                <div id="preview-video-preview-container"
+                                    style="position:relative; display:none; width:100%; padding-top:10px; z-index:20;">
+                                    <video id="preview-video-player" controls
+                                        style="max-width:100%; max-height:160px; border-radius:8px; display:block; margin: 0 auto;"></video>
+                                    <button type="button" class="remove-file-btn" id="remove-preview-video-btn"
+                                        style="top:10px; right:10px;"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                            height="20" fill="#484848" viewBox="2 2 20 20">
+                                            <path
+                                                d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z">
+                                            </path>
+                                            <path
+                                                d="M12 2C9.33 2 6.82 3.04 4.93 4.93S2 9.33 2 12s1.04 5.18 2.93 7.07c1.95 1.95 4.51 2.92 7.07 2.92s5.12-.97 7.07-2.92S22 14.67 22 12s-1.04-5.18-2.93-7.07A9.93 9.93 0 0 0 12 2m5.66 15.66c-3.12 3.12-8.19 3.12-11.31 0-1.51-1.51-2.34-3.52-2.34-5.66s.83-4.15 2.34-5.66S9.87 4 12.01 4s4.15.83 5.66 2.34 2.34 3.52 2.34 5.66-.83 4.15-2.34 5.66Z">
+                                            </path>
+                                        </svg></button>
+                                </div>
+                                <input type="file" id="project-preview-video" accept="video/mp4,video/x-m4v,video/*">
+                                <input type="hidden" id="remove-existing-preview-video" value="false">
+                            </div>
+                        </div>
+                        <div class="file-upload-box">
                             <label>Videos</label>
                             <div style="border: none; padding: 0;">
                                 <!-- Lista visual de videos -->
