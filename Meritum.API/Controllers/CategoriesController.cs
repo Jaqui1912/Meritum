@@ -35,7 +35,7 @@ public class CategoriesController : ControllerBase
             return StatusCode(403, new { message = "Acceso Denegado. Solo el Administrador puede crear categorías." });
         }
 
-        string iconUrl = string.Empty;
+        string iconUrl = newCategoryDto.IconUrl ?? string.Empty;
 
     // Lógica para guardar la imagen
         if (newCategoryDto.IconFile != null)

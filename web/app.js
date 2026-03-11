@@ -227,12 +227,19 @@ document.getElementById('category-form').addEventListener('submit', async (e) =>
             : `${API_URL}/Categories?adminId=${appState.adminId}`;
 
         const method = isEditing ? 'PUT' : 'POST';
+        const reqOpts = { method: method };
 
-        const res = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, iconUrl: icon })
-        });
+        if (isEditing) {
+            reqOpts.headers = { 'Content-Type': 'application/json' };
+            reqOpts.body = JSON.stringify({ name: name, iconUrl: icon });
+        } else {
+            const fd = new FormData();
+            fd.append('Name', name);
+            if (icon) fd.append('IconUrl', icon);
+            reqOpts.body = fd;
+        }
+
+        const res = await fetch(url, reqOpts);
 
         const data = await res.json();
         if (res.ok) {
