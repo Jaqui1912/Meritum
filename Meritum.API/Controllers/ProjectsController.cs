@@ -45,7 +45,13 @@ public class ProjectsController : ControllerBase
             if (p.VideoUrls != null && p.VideoUrls.Count > 0)
             {
                 var fullVideos = new List<string>();
-                foreach (var v in p.VideoUrls) fullVideos.Add(baseUrl + v);
+                foreach (var v in p.VideoUrls)
+                {
+                    if (v.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || v.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        fullVideos.Add(v);
+                    else
+                        fullVideos.Add(baseUrl + v);
+                }
                 p.VideoUrls = fullVideos;
             }
 
@@ -82,7 +88,13 @@ public class ProjectsController : ControllerBase
         if (project.VideoUrls != null && project.VideoUrls.Count > 0)
         {
             var fullVideos = new List<string>();
-            foreach (var v in project.VideoUrls) fullVideos.Add(baseUrl + v);
+            foreach (var v in project.VideoUrls)
+            {
+                if (v.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || v.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    fullVideos.Add(v);
+                else
+                    fullVideos.Add(baseUrl + v);
+            }
             project.VideoUrls = fullVideos;
         }
 
@@ -138,6 +150,12 @@ public class ProjectsController : ControllerBase
                 var url = await _fileStorage.SaveFileAsync(video, "videos");
                 uploadedVideos.Add(url);
             }
+        }
+
+        // Agregar videos externos de YouTube/Drive
+        if (dto.ExternalVideoUrls != null && dto.ExternalVideoUrls.Count > 0)
+        {
+            uploadedVideos.AddRange(dto.ExternalVideoUrls);
         }
 
         // 3. DOCUMENTOS (Lista)
@@ -239,6 +257,12 @@ public class ProjectsController : ControllerBase
                 var url = await _fileStorage.SaveFileAsync(video, "videos");
                 newVideos.Add(url);
             }
+        }
+
+        // Agregar videos externos nuevos en Update
+        if (dto.ExternalVideoUrls != null && dto.ExternalVideoUrls.Count > 0)
+        {
+            newVideos.AddRange(dto.ExternalVideoUrls);
         }
 
         existing.VideoUrls = newVideos;

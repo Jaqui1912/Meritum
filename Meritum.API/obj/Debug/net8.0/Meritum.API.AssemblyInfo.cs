@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Meritum.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31017034b11bc0cb434c34a1e323d9fbcdec5875")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e20114fbcffbecedcd69c1100d46c8a77c30de28")]
 [assembly: System.Reflection.AssemblyProductAttribute("Meritum.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Meritum.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

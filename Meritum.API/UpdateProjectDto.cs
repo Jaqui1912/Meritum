@@ -12,7 +12,8 @@ public class UpdateProjectDto
 
     public IFormFile? ImageFile { get; set; }
     public IFormFile? PreviewVideoFile { get; set; }  // Video corto de presentación
-    public List<IFormFile>? VideoFiles { get; set; } 
+    public List<IFormFile>? VideoFiles { get; set; }
+    public List<string>? ExternalVideoUrls { get; set; }
     public List<IFormFile>? DocumentFiles { get; set; } 
 
     // Banderas para borrar archivos existentes

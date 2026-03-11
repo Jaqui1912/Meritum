@@ -32,6 +32,7 @@ let removeExistingImage = false;
 let removeExistingPreviewVideo = false;
 let keptVideoUrls = [];
 let keptDocumentUrls = [];
+let externalVideoUrls = [];
 let currentVideosTransfer = new DataTransfer();
 
 // ==========================================
@@ -369,10 +370,12 @@ function editProject(id) {
     removeExistingPreviewVideo = false;
     keptVideoUrls = p.videoUrls ? [...p.videoUrls] : [];
     keptDocumentUrls = p.documentUrls ? [...p.documentUrls] : [];
+    externalVideoUrls = [];
     currentDocsTransfer = new DataTransfer();
     currentVideosTransfer = new DataTransfer();
     document.getElementById('project-docs').value = "";
     document.getElementById('project-video').value = "";
+    document.getElementById('external-video-url').value = "";
     document.getElementById('project-preview-video').value = "";
     document.getElementById('remove-existing-preview-video').value = 'false';
 
@@ -466,6 +469,8 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
         if (keptDocumentUrls.length > 0) {
             formData.append('KeptDocumentUrls', keptDocumentUrls.join(','));
         }
+        
+        externalVideoUrls.forEach(url => formData.append('ExternalVideoUrls', url));
 
         btn.disabled = true;
         btn.innerHTML = "Subiendo archivos...";
@@ -496,6 +501,7 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
             currentDocsTransfer = new DataTransfer();
             keptVideoUrls = [];
             keptDocumentUrls = [];
+            externalVideoUrls = [];
 
             loadProjects();
         } else {
@@ -689,14 +695,32 @@ function removeDocFile(index) {
     renderDocsList(); // re-render list without the removed item
 }
 
+document.getElementById('add-external-video-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('external-video-url');
+    const url = input.value.trim();
+    if (url) {
+        externalVideoUrls.push(url);
+        input.value = "";
+        renderVideosList();
+    }
+});
+
 function renderVideosList() {
     const list = document.getElementById('videos-preview-list');
     list.innerHTML = '';
 
     // Renderizar videos que ya estaban guardados en la nube
     keptVideoUrls.forEach((vidUrl) => {
-        const parts = vidUrl.split('/');
-        const name = parts[parts.length - 1].split('_').pop();
+        let displayName = vidUrl;
+        let prefix = "🔗 ";
+        if (vidUrl.includes('/uploads/')) {
+            const parts = vidUrl.split('/');
+            displayName = parts[parts.length - 1].split('_').pop();
+            prefix = "☁️ ";
+        } else if (vidUrl.length > 40) {
+            displayName = vidUrl.substring(0, 40) + '...';
+        }
 
         const li = document.createElement('li');
         li.style.position = 'relative';
@@ -704,7 +728,7 @@ function renderVideosList() {
         li.style.background = 'rgba(79, 70, 229, 0.05)';
         li.style.marginBottom = '6px';
         li.style.borderRadius = '6px';
-        li.textContent = "☁️ " + name;
+        li.textContent = prefix + displayName;
 
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -719,6 +743,36 @@ function renderVideosList() {
             e.preventDefault();
             e.stopPropagation();
             keptVideoUrls = keptVideoUrls.filter(u => u !== vidUrl);
+            renderVideosList();
+        };
+
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+
+    // Renderizar videos externos nuevos
+    externalVideoUrls.forEach((extUrl, index) => {
+        const li = document.createElement('li');
+        li.style.position = 'relative';
+        li.style.padding = '8px 30px 8px 8px';
+        li.style.background = 'rgba(16, 185, 129, 0.05)';
+        li.style.marginBottom = '6px';
+        li.style.borderRadius = '6px';
+        li.textContent = "🔗 " + (extUrl.length > 40 ? extUrl.substring(0, 40) + '...' : extUrl);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove-file-btn';
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#484848" viewBox="2 2 20 20"><path d="M14.83 7.76 12 10.59 9.17 7.76 7.76 9.17 10.59 12l-2.83 2.83 1.41 1.41L12 13.41l2.83 2.83 1.41-1.41L13.41 12l2.83-2.83z"></path></svg>`;
+        btn.style.transform = 'none';
+        btn.style.top = '50%';
+        btn.style.transform = 'translateY(-50%)';
+        btn.style.right = '4px';
+
+        btn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            externalVideoUrls.splice(index, 1);
             renderVideosList();
         };
 

@@ -17,6 +17,7 @@ public class CreateProjectDto
 
     // Los videos (Lista - soporta múltiples videos)
     public List<IFormFile>? VideoFiles { get; set; } 
+    public List<string>? ExternalVideoUrls { get; set; }
 
     // Los documentos (Lista)
     public List<IFormFile>? DocumentFiles { get; set; } 
