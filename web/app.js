@@ -698,8 +698,25 @@ function removeDocFile(index) {
 document.getElementById('add-external-video-btn').addEventListener('click', function(e) {
     e.preventDefault();
     const input = document.getElementById('external-video-url');
-    const url = input.value.trim();
+    let url = input.value.trim();
     if (url) {
+        // Sistema inteligente para transformar URLs de Google Drive a enlaces directos de descarga/streaming
+        if (url.includes('drive.google.com')) {
+            let fileId = null;
+            if (url.includes('/file/d/')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) fileId = match[1];
+            } else if (url.includes('id=')) {
+                const match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) fileId = match[1];
+            }
+            
+            if (fileId) {
+                // Convertir a formato de descarga directa para visualización sin login
+                url = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+        }
+
         externalVideoUrls.push(url);
         input.value = "";
         renderVideosList();
