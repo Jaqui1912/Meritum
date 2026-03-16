@@ -37,8 +37,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpClient("KeepAliveClient");
-builder.Services.AddHostedService<Meritum.API.Services.KeepAliveService>();
+// COMENTADO PARA KOYEB: Evitar consumo de horas gratuitas
+// builder.Services.AddHttpClient("KeepAliveClient");
+// builder.Services.AddHostedService<Meritum.API.Services.KeepAliveService>();
 
 var app = builder.Build();
 
