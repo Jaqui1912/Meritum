@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/tvLWmbgpdU=",
+  "dgSpecHash": "nskVD6ImOMY=",
   "success": true,
-  "projectFilePath": "c:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\angel\\Meritum\\Meritum.Infrastructure\\Meritum.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\angel\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\angel\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",

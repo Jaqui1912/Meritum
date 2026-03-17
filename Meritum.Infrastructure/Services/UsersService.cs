@@ -32,6 +32,10 @@ public class UsersService
     public async Task<List<User>> GetAllAsync() =>
         await _usersCollection.Find(_ => true).ToListAsync();
 
+    // 5. Buscar por Token de Verificación
+    public async Task<User?> GetByVerificationTokenAsync(string token) =>
+        await _usersCollection.Find(x => x.VerificationToken == token).FirstOrDefaultAsync();
+
     // 5. Actualizar Usuario
     public async Task UpdateAsync(string id, User updatedUser) =>
         await _usersCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
