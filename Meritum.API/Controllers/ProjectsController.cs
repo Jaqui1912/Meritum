@@ -336,5 +336,114 @@ public class ProjectsController : ControllerBase
         await _projectsService.RemoveAsync(id);
         return Ok(new { message = "Proyecto eliminado." });
     }
+
+    // POST: Migrar a Cloudinary (ADMIN)
+    [HttpPost("migrate-to-cloudinary")]
+    public async Task<IActionResult> MigrateToCloudinary([FromQuery] string adminId, [FromServices] Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
+    {
+        // Validar admin
+        var user = await _usersService.GetByIdAsync(adminId);
+        if (user == null || user.Role != "Administrador")
+        {
+            return StatusCode(403, new { message = "Acceso Denegado." });
+        }
+
+        var projects = await _projectsService.GetAllAsync(null, null);
+        string webRoot = env.WebRootPath ?? System.IO.Path.Combine(env.ContentRootPath, "wwwroot");
+        int migratedCount = 0;
+
+        foreach (var p in projects)
+        {
+            bool updated = false;
+
+            // Imagen
+            if (!string.IsNullOrEmpty(p.ImageUrl) && p.ImageUrl.StartsWith("/uploads/"))
+            {
+                var localPath = System.IO.Path.Combine(webRoot, p.ImageUrl.TrimStart('/').Replace("/", "\\"));
+                var newUrl = await _fileStorage.UploadLocalFileAsync(localPath, "images");
+                if (!string.IsNullOrEmpty(newUrl))
+                {
+                    p.ImageUrl = newUrl;
+                    updated = true;
+                }
+            }
+
+            // Preview
+            if (!string.IsNullOrEmpty(p.PreviewVideoUrl) && p.PreviewVideoUrl.StartsWith("/uploads/"))
+            {
+                var localPath = System.IO.Path.Combine(webRoot, p.PreviewVideoUrl.TrimStart('/').Replace("/", "\\"));
+                var newUrl = await _fileStorage.UploadLocalFileAsync(localPath, "previews");
+                if (!string.IsNullOrEmpty(newUrl))
+                {
+                    p.PreviewVideoUrl = newUrl;
+                    updated = true;
+                }
+            }
+
+            // Videos
+            if (p.VideoUrls != null && p.VideoUrls.Count > 0)
+            {
+                var newVideoUrls = new List<string>();
+                foreach (var v in p.VideoUrls)
+                {
+                    if (v.StartsWith("/uploads/"))
+                    {
+                        var localPath = System.IO.Path.Combine(webRoot, v.TrimStart('/').Replace("/", "\\"));
+                        var newUrl = await _fileStorage.UploadLocalFileAsync(localPath, "videos");
+                        if (!string.IsNullOrEmpty(newUrl))
+                        {
+                            newVideoUrls.Add(newUrl);
+                            updated = true;
+                        }
+                        else
+                        {
+                            newVideoUrls.Add(v); // keep old if failed to upload
+                        }
+                    }
+                    else
+                    {
+                        newVideoUrls.Add(v);
+                    }
+                }
+                p.VideoUrls = newVideoUrls;
+            }
+
+            // Documentos
+            if (p.DocumentUrls != null && p.DocumentUrls.Count > 0)
+            {
+                var newDocUrls = new List<string>();
+                foreach (var doc in p.DocumentUrls)
+                {
+                    if (doc.StartsWith("/uploads/"))
+                    {
+                        var localPath = System.IO.Path.Combine(webRoot, doc.TrimStart('/').Replace("/", "\\"));
+                        var newUrl = await _fileStorage.UploadLocalFileAsync(localPath, "documents");
+                        if (!string.IsNullOrEmpty(newUrl))
+                        {
+                            newDocUrls.Add(newUrl);
+                            updated = true;
+                        }
+                        else
+                        {
+                            newDocUrls.Add(doc);
+                        }
+                    }
+                    else
+                    {
+                        newDocUrls.Add(doc);
+                    }
+                }
+                p.DocumentUrls = newDocUrls;
+            }
+
+            if (updated)
+            {
+                await _projectsService.UpdateAsync(p.Id, p);
+                migratedCount++;
+            }
+        }
+
+        return Ok(new { message = $"Migración completada. Proyectos actualizados exitosamente a Cloudinary: {migratedCount}" });
+    }
 }
 

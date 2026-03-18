@@ -91,4 +91,46 @@ public class FileStorageService
 
         return $"/uploads/{folderName}/{uniqueFileName}";
     }
+
+    public async Task<string> UploadLocalFileAsync(string localFilePath, string folderName)
+    {
+        if (_cloudinary == null) return string.Empty;
+        if (!File.Exists(localFilePath)) return string.Empty;
+
+        // Decidir tipo de archivo según la carpeta
+        bool isVideo = folderName.ToLower().Contains("video") || folderName.ToLower().Contains("preview");
+        bool isImage = folderName.ToLower().Contains("image");
+        
+        if (isVideo)
+        {
+            var uploadParams = new VideoUploadParams()
+            {
+                File = new FileDescription(localFilePath),
+                Folder = $"meritum_uploads/{folderName}"
+            };
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
+        }
+        else if (isImage)
+        {
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(localFilePath),
+                Folder = $"meritum_uploads/{folderName}"
+            };
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
+        }
+        else
+        {
+            // Documentos u otros
+            var uploadParams = new RawUploadParams()
+            {
+                File = new FileDescription(localFilePath),
+                Folder = $"meritum_uploads/{folderName}"
+            };
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
+        }
+    }
 }
