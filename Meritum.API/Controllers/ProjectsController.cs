@@ -206,6 +206,7 @@ public class ProjectsController : ControllerBase
             Title = dto.Title,
             Description = dto.Description ?? "",
             TeamMembers = dto.TeamMembers ?? "",
+            Technologies = !string.IsNullOrEmpty(dto.Technologies) ? dto.Technologies.Split(',').Select(t => t.Trim()).ToList() : new List<string>(),
 
             // Asignamos las rutas
             ImageUrl = imageUrl,
@@ -238,6 +239,7 @@ public class ProjectsController : ControllerBase
         existing.CategoryId = dto.CategoryId;
         existing.Description = dto.Description ?? "";
         existing.TeamMembers = dto.TeamMembers ?? "";
+        existing.Technologies = !string.IsNullOrEmpty(dto.Technologies) ? dto.Technologies.Split(',').Select(t => t.Trim()).ToList() : new List<string>();
 
         if (dto.ImageFile != null)
         {

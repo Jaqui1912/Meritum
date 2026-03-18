@@ -9,6 +9,7 @@ public class UpdateProjectDto
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public string? TeamMembers { get; set; }
+    public string? Technologies { get; set; }
 
     public IFormFile? ImageFile { get; set; }
     public IFormFile? PreviewVideoFile { get; set; }  // Video corto de presentación

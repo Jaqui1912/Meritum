@@ -34,6 +34,7 @@ let keptVideoUrls = [];
 let keptDocumentUrls = [];
 let externalVideoUrls = [];
 let currentVideosTransfer = new DataTransfer();
+let projectTechnologies = []; // NUEVO: Estado para las tecnologías del form
 
 // ==========================================
 // 1. INICIALIZACIÓN
@@ -328,11 +329,18 @@ function renderProjectsTable() {
             docsStr = `<span class="badge" style="background:var(--secondary); color:#A16207;">📄 ${p.documentUrls.length}</span>`;
         }
 
+        // Tecnologías tags
+        let techStr = '<span style="color:#9CA3AF; font-size:0.8rem;">Ninguna</span>';
+        if (p.technologies && p.technologies.length > 0) {
+            techStr = p.technologies.map(t => `<span class="badge" style="background:#5B21B6; color:white; font-size: 0.75rem;">${t}</span>`).join(' ');
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${imgBlock}</td>
             <td><strong>${p.title}</strong></td>
             <td><span class="badge">${categoryName}</span></td>
+            <td>${techStr}</td>
             <td>${videoStr}</td>
             <td>${docsStr}</td>
             <td style="font-size: 0.875rem;">${p.teamMembers || 'N/A'}</td>
@@ -378,6 +386,10 @@ function editProject(id) {
     document.getElementById('external-video-url').value = "";
     document.getElementById('project-preview-video').value = "";
     document.getElementById('remove-existing-preview-video').value = 'false';
+
+    // Tecnologías
+    projectTechnologies = p.technologies ? [...p.technologies] : [];
+    renderTechTags();
 
     // Show existing image preview if available
     if (p.imageUrl) {
@@ -436,6 +448,7 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
         // Solo enviar si no están vacíos (para que .NET los tome como null si están ausentes)
         if (teamMembers.trim() !== '') formData.append('TeamMembers', teamMembers);
         if (description.trim() !== '') formData.append('Description', description);
+        if (projectTechnologies.length > 0) formData.append('Technologies', projectTechnologies.join(','));
 
         // Si es edición, C# espera que la clase completa se empareje para evitar nulos sobreescribiendo
         if (id) formData.append('Id', id);
@@ -517,9 +530,68 @@ document.getElementById('project-form').addEventListener('submit', async (e) => 
     }
 });
 
+// Wrapper para Nuevo Proyecto
+function openNewProjectModal() {
+    projectTechnologies = [];
+    renderTechTags();
+    document.getElementById('project-form').reset();
+    document.getElementById('project-id').value = "";
+    document.getElementById('project-modal-title').textContent = "Nuevo Proyecto";
+    
+    document.getElementById('image-preview-container').style.display = 'none';
+    document.getElementById('image-icon').style.display = 'block';
+    document.getElementById('videos-preview-list').innerHTML = '';
+    document.getElementById('docs-preview-list').innerHTML = '';
+    document.getElementById('preview-video-preview-container').style.display = 'none';
+    document.getElementById('preview-video-icon').style.display = 'block';
+    
+    currentVideosTransfer = new DataTransfer();
+    currentDocsTransfer = new DataTransfer();
+    keptVideoUrls = [];
+    keptDocumentUrls = [];
+    externalVideoUrls = [];
+    removeExistingImage = false;
+    removeExistingPreviewVideo = false;
+    
+    openModal('project-modal');
+}
+
 // ==========================================
-// PREVISUALIZACIÓN DE ARCHIVOS
+// PREVISUALIZACIÓN DE ARCHIVOS YAÑADIR TECNOLOGÍAS
 // ==========================================
+
+// Logica de tecnologías
+document.getElementById('add-tech-btn').addEventListener('click', () => {
+    const input = document.getElementById('tech-input');
+    const val = input.value.trim();
+    if(val) {
+        if(!projectTechnologies.includes(val)) {
+            projectTechnologies.push(val);
+            renderTechTags();
+        }
+        input.value = '';
+    }
+});
+
+function renderTechTags() {
+    const container = document.getElementById('tech-tags-container');
+    container.innerHTML = '';
+    projectTechnologies.forEach((tech, index) => {
+        const badge = document.createElement('div');
+        badge.style.cssText = "background: #5B21B6; color: white; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;";
+        badge.innerHTML = `
+            ${tech}
+            <i class='bx bx-x' style='cursor:pointer; font-size: 1.1rem; opacity: 0.7;' onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" onclick="removeTech(${index})"></i>
+        `;
+        container.appendChild(badge);
+    });
+}
+
+window.removeTech = function(index) {
+    projectTechnologies.splice(index, 1);
+    renderTechTags();
+};
+
 document.getElementById('project-image').addEventListener('change', function (e) {
     const file = e.target.files[0];
     const previewContainer = document.getElementById('image-preview-container');

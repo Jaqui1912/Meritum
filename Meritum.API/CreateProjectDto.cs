@@ -8,6 +8,7 @@ public class CreateProjectDto
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public string? TeamMembers { get; set; }
+    public string? Technologies { get; set; }
 
     // 📸 1. NUEVO: El archivo de la imagen de portada
     public IFormFile? ImageFile { get; set; }

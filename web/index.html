@@ -89,7 +89,7 @@
                                 <!-- Se llena dinámicamente -->
                             </select>
                         </div>
-                        <button class="btn btn-primary" onclick="openModal('project-modal')">
+                        <button class="btn btn-primary" onclick="openNewProjectModal()">
                             <i class='bx bx-plus'></i> Nuevo Proyecto
                         </button>
                     </div>
@@ -101,6 +101,7 @@
                                     <th>Portada</th>
                                     <th>Título</th>
                                     <th>Categoría</th>
+                                    <th>Tecnologías</th>
                                     <th>Video</th>
                                     <th>Documentos</th>
                                     <th>Integrantes</th>
@@ -175,6 +176,18 @@
                     <div class="input-group">
                         <label for="project-desc">Descripción</label>
                         <textarea id="project-desc" rows="3"></textarea>
+                    </div>
+
+                    <!-- NUEVO: Tecnologías -->
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <label>Tecnologías</label>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" id="tech-input" placeholder="Ej. Flutter, C#, React..." style="flex: 1;" onkeypress="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('add-tech-btn').click(); }">
+                            <button type="button" id="add-tech-btn" class="btn btn-secondary" style="white-space: nowrap;"><i class='bx bx-plus'></i> Añadir</button>
+                        </div>
+                        <div id="tech-tags-container" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Las tecnologías se renderizan aquí como 'badges' -->
+                        </div>
                     </div>
 
                     <div class="form-grid files-grid">
