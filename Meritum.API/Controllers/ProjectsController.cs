@@ -39,7 +39,11 @@ public class ProjectsController : ControllerBase
         foreach (var p in projects)
         {
             p.MigrateVideoUrl(); // Backward compat: videoUrl -> videoUrls
-            if (!string.IsNullOrEmpty(p.ImageUrl)) p.ImageUrl = baseUrl + p.ImageUrl;
+            if (!string.IsNullOrEmpty(p.ImageUrl))
+            {
+                if (!p.ImageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !p.ImageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    p.ImageUrl = baseUrl + p.ImageUrl;
+            }
 
             // Multi-video: transformar cada URL de video
             if (p.VideoUrls != null && p.VideoUrls.Count > 0)
@@ -58,11 +62,21 @@ public class ProjectsController : ControllerBase
             if (p.DocumentUrls != null && p.DocumentUrls.Count > 0)
             {
                 var fullLinks = new List<string>();
-                foreach (var doc in p.DocumentUrls) fullLinks.Add(baseUrl + doc);
+                foreach (var doc in p.DocumentUrls)
+                {
+                    if (doc.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || doc.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        fullLinks.Add(doc);
+                    else
+                        fullLinks.Add(baseUrl + doc);
+                }
                 p.DocumentUrls = fullLinks;
             }
 
-            if (!string.IsNullOrEmpty(p.PreviewVideoUrl)) p.PreviewVideoUrl = baseUrl + p.PreviewVideoUrl;
+            if (!string.IsNullOrEmpty(p.PreviewVideoUrl))
+            {
+                if (!p.PreviewVideoUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !p.PreviewVideoUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    p.PreviewVideoUrl = baseUrl + p.PreviewVideoUrl;
+            }
         }
 
         return Ok(projects);
@@ -82,7 +96,10 @@ public class ProjectsController : ControllerBase
 
         // 2. Transformamos las URLs para este único proyecto
         if (!string.IsNullOrEmpty(project.ImageUrl))
-            project.ImageUrl = baseUrl + project.ImageUrl;
+        {
+            if (!project.ImageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !project.ImageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                project.ImageUrl = baseUrl + project.ImageUrl;
+        }
 
         // Multi-video
         if (project.VideoUrls != null && project.VideoUrls.Count > 0)
@@ -103,13 +120,19 @@ public class ProjectsController : ControllerBase
             var fullLinks = new List<string>();
             foreach (var doc in project.DocumentUrls)
             {
-                fullLinks.Add(baseUrl + doc);
+                if (doc.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || doc.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    fullLinks.Add(doc);
+                else
+                    fullLinks.Add(baseUrl + doc);
             }
             project.DocumentUrls = fullLinks;
         }
 
         if (!string.IsNullOrEmpty(project.PreviewVideoUrl))
-            project.PreviewVideoUrl = baseUrl + project.PreviewVideoUrl;
+        {
+            if (!project.PreviewVideoUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !project.PreviewVideoUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                project.PreviewVideoUrl = baseUrl + project.PreviewVideoUrl;
+        }
 
         return Ok(project);
     }

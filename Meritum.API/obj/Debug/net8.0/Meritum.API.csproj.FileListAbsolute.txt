@@ -105,3 +105,5 @@ C:\Users\angel\Meritum\Meritum.API\obj\Debug\net8.0\refint\Meritum.API.dll
 C:\Users\angel\Meritum\Meritum.API\obj\Debug\net8.0\Meritum.API.pdb
 C:\Users\angel\Meritum\Meritum.API\obj\Debug\net8.0\Meritum.API.genruntimeconfig.cache
 C:\Users\angel\Meritum\Meritum.API\obj\Debug\net8.0\ref\Meritum.API.dll
+C:\Users\angel\Meritum\Meritum.API\bin\Debug\net8.0\CloudinaryDotNet.dll
+C:\Users\angel\Meritum\Meritum.API\bin\Debug\net8.0\Newtonsoft.Json.dll
