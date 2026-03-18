@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj": {}
+    "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj": {
+    "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj",
+        "projectUniqueName": "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
         "projectName": "Meritum.API",
-        "projectPath": "C:\\Users\\angel\\Meritum\\meritum.api\\Meritum.API.csproj",
+        "projectPath": "C:\\Users\\angel\\Meritum\\Meritum.API\\Meritum.API.csproj",
         "packagesPath": "C:\\Users\\angel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\angel\\Meritum\\meritum.api\\obj\\",
+        "outputPath": "C:\\Users\\angel\\Meritum\\Meritum.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
