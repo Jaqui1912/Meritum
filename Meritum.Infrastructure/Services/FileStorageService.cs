@@ -42,6 +42,7 @@ public class FileStorageService
             // Decidir tipo de archivo según la carpeta (videos, images, documents, previews)
             bool isVideo = folderName.ToLower().Contains("video") || folderName.ToLower().Contains("preview");
             bool isImage = folderName.ToLower().Contains("image");
+            bool isPdf = file.FileName.ToLower().EndsWith(".pdf");
             
             if (isVideo)
             {
@@ -53,24 +54,30 @@ public class FileStorageService
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                 return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
             }
-            else if (isImage)
+            else if (isImage || isPdf)
             {
+                // Subir PDFs como 'image' permite a Cloudinary renderizarlos inline (sin descargar)
+                // y así funcionan nativamente en el visor de Google Docs dentro de la app.
+                string cleanName = Path.GetFileNameWithoutExtension(file.FileName).Replace(" ", "_").ToLowerInvariant();
+                string publicId = isPdf 
+                    ? $"{cleanName}_{Guid.NewGuid().ToString("N")[..8]}.pdf"
+                    : file.FileName;
+                    
                 var uploadParams = new ImageUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Folder = $"meritum_uploads/{folderName}"
+                    Folder = $"meritum_uploads/{folderName}",
+                    PublicId = isPdf ? publicId : null,
+                    Overwrite = false
                 };
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                 return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
             }
             else
             {
-                // Documentos u otros: preservar nombre original para que la URL sea legible
-                string cleanName = Path.GetFileNameWithoutExtension(file.FileName)
-                    .Replace(" ", "_")
-                    .ToLowerInvariant();
-                string ext = Path.GetExtension(file.FileName).TrimStart('.');
-                string publicId = $"meritum_uploads/{folderName}/{cleanName}_{Guid.NewGuid().ToString("N")[..8]}";
+                // Otros documentos que no son imagen ni pdf (doc, xls, etc.)
+                string cleanName = Path.GetFileNameWithoutExtension(file.FileName).Replace(" ", "_").ToLowerInvariant();
+                string publicId = $"{cleanName}_{Guid.NewGuid().ToString("N")[..8]}";
 
                 var uploadParams = new RawUploadParams()
                 {
@@ -80,7 +87,6 @@ public class FileStorageService
                     Overwrite = false,
                 };
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-                // La URL raw de Cloudinary incluye /raw/upload/ — es necesaria para que Google Docs Viewer la lea
                 return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
             }
         }
@@ -109,6 +115,7 @@ public class FileStorageService
         // Decidir tipo de archivo según la carpeta
         bool isVideo = folderName.ToLower().Contains("video") || folderName.ToLower().Contains("preview");
         bool isImage = folderName.ToLower().Contains("image");
+        bool isPdf = localFilePath.ToLower().EndsWith(".pdf");
         
         if (isVideo)
         {
@@ -120,23 +127,35 @@ public class FileStorageService
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
         }
-        else if (isImage)
+        else if (isImage || isPdf)
         {
+            string cleanName = Path.GetFileNameWithoutExtension(localFilePath).Replace(" ", "_").ToLowerInvariant();
+            string publicId = isPdf 
+                ? $"{cleanName}_{Guid.NewGuid().ToString("N")[..8]}.pdf"
+                : Path.GetFileName(localFilePath);
+
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(localFilePath),
-                Folder = $"meritum_uploads/{folderName}"
+                Folder = $"meritum_uploads/{folderName}",
+                PublicId = isPdf ? publicId : null,
+                Overwrite = false
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
         }
         else
         {
-            // Documentos u otros
+            // Otros documentos
+            string cleanName = Path.GetFileNameWithoutExtension(localFilePath).Replace(" ", "_").ToLowerInvariant();
+            string publicId = $"{cleanName}_{Guid.NewGuid().ToString("N")[..8]}";
+
             var uploadParams = new RawUploadParams()
             {
                 File = new FileDescription(localFilePath),
-                Folder = $"meritum_uploads/{folderName}"
+                Folder = $"meritum_uploads/{folderName}",
+                PublicId = publicId,
+                Overwrite = false,
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
             return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
