@@ -65,13 +65,22 @@ public class FileStorageService
             }
             else
             {
-                // Documentos u otros
+                // Documentos u otros: preservar nombre original para que la URL sea legible
+                string cleanName = Path.GetFileNameWithoutExtension(file.FileName)
+                    .Replace(" ", "_")
+                    .ToLowerInvariant();
+                string ext = Path.GetExtension(file.FileName).TrimStart('.');
+                string publicId = $"meritum_uploads/{folderName}/{cleanName}_{Guid.NewGuid().ToString("N")[..8]}";
+
                 var uploadParams = new RawUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Folder = $"meritum_uploads/{folderName}"
+                    Folder = $"meritum_uploads/{folderName}",
+                    PublicId = publicId,
+                    Overwrite = false,
                 };
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                // La URL raw de Cloudinary incluye /raw/upload/ — es necesaria para que Google Docs Viewer la lea
                 return uploadResult.SecureUrl?.AbsoluteUri ?? string.Empty;
             }
         }
